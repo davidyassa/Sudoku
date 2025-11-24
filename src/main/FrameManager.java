@@ -2,8 +2,11 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Main.java to edit this template
  */
-package sudoku;
+package main;
 
+import frontend.ModeThree;
+import frontend.ModeTwentySeven;
+import frontend.ModeZero;
 import javax.swing.*;
 
 /**
@@ -13,7 +16,7 @@ import javax.swing.*;
 public class FrameManager extends JFrame {
 
     public FrameManager() {
-        this.setTitle("Skill Forge");
+        this.setTitle("Sudoku 9x9");
         this.setSize(800, 600);
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.setLocationRelativeTo(null);
