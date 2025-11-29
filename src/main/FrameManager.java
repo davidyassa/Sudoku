@@ -4,9 +4,8 @@
  */
 package main;
 
-import frontend.ModeThree;
-import frontend.ModeTwentySeven;
-import frontend.ModeZero;
+import frontend.ViewTable;
+import java.util.Stack;
 import javax.swing.*;
 
 /**
@@ -14,6 +13,9 @@ import javax.swing.*;
  * @author DELL 7550
  */
 public class FrameManager extends JFrame {
+
+    private final Stack<JPanel> history = new Stack<>();
+    private JPanel currentPanel;
 
     public FrameManager() {
         this.setTitle("Sudoku 9x9");
@@ -29,40 +31,45 @@ public class FrameManager extends JFrame {
         JPanel panel = new JPanel();
         panel.setLayout(null);
 
-        JButton mode0 = new JButton("Mode 0");
-        mode0.setBounds(100, 200, 150, 40);
-        panel.add(mode0);
-
-        JButton mode3 = new JButton("Mode 3");
-        mode3.setBounds(300, 200, 150, 40);
-        panel.add(mode3);
-
-        JButton mode27 = new JButton("Mode 27");
-        mode27.setBounds(500, 200, 150, 40);
-        panel.add(mode27);
+        JButton StartButton = new JButton("Start");
+        StartButton.setBounds(300, 200, 150, 40);
+        panel.add(StartButton);
 
         JButton exitButton = new JButton("Exit");
-        exitButton.setBounds(300, 310, 150, 40);
+        exitButton.setBounds(300, 300, 150, 40);
         panel.add(exitButton);
-        exitButton.addActionListener(e -> System.exit(0));
 
-        mode0.addActionListener(e -> switchPanel(new ModeZero(this)));
-        mode3.addActionListener(e -> switchPanel(new ModeThree(this)));
-        mode27.addActionListener(e -> switchPanel(new ModeTwentySeven(this)));
         exitButton.addActionListener(e -> System.exit(0));
+        StartButton.addActionListener(e -> switchPanel(new ViewTable(this)));
 
         setContentPane(panel);
         revalidate();
         repaint();
     }
 
-    public void switchPanel(JPanel panel) {
-        setContentPane(panel);
+    public void switchPanel(JPanel newPanel) {
+        if (currentPanel != null) {
+            history.push(currentPanel);
+        }
+        currentPanel = newPanel;
+
+        setContentPane(newPanel);
         revalidate();
         repaint();
+    }
+
+    public void previousPanel() {
+        if (!history.isEmpty()) {
+            JPanel prev = history.pop();
+            currentPanel = prev;
+
+            setContentPane(prev);
+            revalidate();
+            repaint();
+        }
     }
 
     public static void main(String[] args) {
-        new FrameManager();
+        FrameManager f = new FrameManager();
     }
 }

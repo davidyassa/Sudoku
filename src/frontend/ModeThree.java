@@ -26,7 +26,6 @@ public class ModeThree extends JPanel {
         add(backButton);
 
         exitButton.addActionListener(e -> System.exit(0));
-        backButton.addActionListener(e -> frame.showMainMenu());
-
+        backButton.addActionListener(e -> frame.previousPanel());
     }
 }

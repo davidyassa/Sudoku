@@ -4,6 +4,7 @@
  */
 package frontend;
 
+import backend.ModeZeroSolve;
 import main.FrameManager;
 import javax.swing.*;
 
@@ -13,19 +14,33 @@ import javax.swing.*;
  */
 public class ModeZero extends JPanel {
 
-    public ModeZero(FrameManager frame) {
-        super();
-        setLayout(null);
+    private FrameManager frame;
+    private ViewTable viewTable;
+    private ModeZeroSolve solver = new ModeZeroSolve();
 
-        JButton exitButton = new JButton("Exit");
-        exitButton.setBounds(95, 10, 75, 30);
-        add(exitButton);
+    public ModeZero(FrameManager frame, ViewTable viewTable) {
+        this.frame = frame;
+        this.viewTable = viewTable;
 
-        JButton backButton = new JButton("Return");
-        backButton.setBounds(10, 10, 75, 30);
-        add(backButton);
+        JButton runBtn = new JButton("Run Mode 0");
+        add(runBtn);
 
-        exitButton.addActionListener(e -> System.exit(0));
-        backButton.addActionListener(e -> frame.showMainMenu());
+        runBtn.addActionListener(e -> runModeZero());
+    }
+
+    private void runModeZero() {
+        String file = viewTable.getCurrentFilePath();
+
+        if (file == null) {
+            JOptionPane.showMessageDialog(this,
+                    "No CSV file is open!",
+                    "Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
+        int[][] dup = solver.Solve(file);
+
+        // TODO: show results in UI
+        JOptionPane.showMessageDialog(this, "ModeZero Execute Complete");
     }
 }

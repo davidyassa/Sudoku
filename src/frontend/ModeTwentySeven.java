@@ -7,10 +7,6 @@ package frontend;
 import main.FrameManager;
 import javax.swing.*;
 
-/**
- *
- * @author DELL 7550
- */
 public class ModeTwentySeven extends JPanel {
 
     public ModeTwentySeven(FrameManager frame) {
@@ -26,7 +22,6 @@ public class ModeTwentySeven extends JPanel {
         add(backButton);
 
         exitButton.addActionListener(e -> System.exit(0));
-        backButton.addActionListener(e -> frame.showMainMenu());
-
+        backButton.addActionListener(e -> frame.previousPanel());
     }
 }
