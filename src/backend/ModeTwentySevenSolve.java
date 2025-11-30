@@ -14,26 +14,25 @@ public class ModeTwentySevenSolve {
 
         
         for (int i = 0; i < 9; i++) {
-            threads.add(new Thread(new CheckerTask(board, "ROW", i, report)));
-            threads.add(new Thread(new CheckerTask(board, "COL", i, report)));
-            threads.add(new Thread(new CheckerTask(board, "BOX", i, report)));
+            threads.add(new Thread(TaskFactory.createChecker(board, RegionType.ROW, i, report)));
+            threads.add(new Thread(TaskFactory.createChecker(board, RegionType.COLUMN, i, report)));
+            threads.add(new Thread(TaskFactory.createChecker(board, RegionType.BOX, i, report)));
         }
 
-        long start = System.currentTimeMillis();
+        long startTime = System.nanoTime();
 
-        for (Thread t : threads) {
-            t.start();
-        }
+        for (Thread t : threads) t.start();
 
         for (Thread t : threads) {
             try {
                 t.join();
             } catch (InterruptedException e) {
-                System.out.println("Interrupted: " + e.getMessage());
+                Thread.currentThread().interrupt(); 
+                System.err.println("Thread interrupted");
             }
         }
         
-        long end = System.currentTimeMillis();
-        System.out.println("Mode 27 finished in: " + (end - start) + "ms");
+        long endTime = System.nanoTime();
+        System.out.println("Mode 27 Execution Time: " + (endTime - startTime) / 1000000 + " ms");
     }
 }
