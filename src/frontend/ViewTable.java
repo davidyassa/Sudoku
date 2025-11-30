@@ -38,8 +38,7 @@ public class ViewTable extends JPanel {
 
         mode0Button.addActionListener(e -> frame.switchPanel(new ModeZero(frame, this)));
         mode3Button.addActionListener(e -> frame.switchPanel(new ModeThree(frame)));
-        mode27Button.addActionListener(e -> frame.switchPanel(new ModeTwentySeven(frame)));
-
+        mode27Button.addActionListener(e -> frame.switchPanel(new ModeTwentySeven(frame, this)));
         exitButton.addActionListener(e -> System.exit(0));
         openButton.addActionListener(e -> chooseAndLoadCSV());
 
