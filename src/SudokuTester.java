@@ -3,7 +3,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
 public class SudokuTester {
-     // string of all csv files paths
+
     public void runAllTests(String[] files) {
         for (String file : files) {
             testFile(file);
@@ -40,8 +40,11 @@ public class SudokuTester {
         long start = System.currentTimeMillis();
         ValidationResult result = validator.validate();
         long end = System.currentTimeMillis();
+        
+        System.out.println("Mode " + mode + " result:");
+        SudokuReporter.printResult(result);
+        System.out.println("------------------------------------------");
 
-      
         return end - start;
     }
 }
