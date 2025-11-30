@@ -9,5 +9,7 @@ package backend;
  * @author Mostafa
  */
 public class TaskFactory {
-    
+    public static Runnable createChecker(int[][] board, RegionType type, int index, ValidationReport report) {
+        return new CheckerTask(board, type, index, report);
+    }
 }
