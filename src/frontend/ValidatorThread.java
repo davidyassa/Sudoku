@@ -1,4 +1,3 @@
-
 package frontend;
 
 import backend.ValidationReport;
@@ -45,8 +44,8 @@ public class ValidatorThread implements Runnable {
                 int value = board[row][col];
 
                 if (seen[value]) {
-                    report.addError("Duplicate in ROW " + (row + 1) +
-                            " value = " + value);
+                    report.addError("Duplicate in ROW " + (row + 1)
+                            + " value = " + value);
                 }
                 seen[value] = true;
             }
@@ -61,8 +60,8 @@ public class ValidatorThread implements Runnable {
                 int value = board[row][col];
 
                 if (seen[value]) {
-                    report.addError("Duplicate in COLUMN " + (col + 1) +
-                            " value = " + value);
+                    report.addError("Duplicate in COLUMN " + (col + 1)
+                            + " value = " + value);
                 }
                 seen[value] = true;
             }
@@ -84,9 +83,9 @@ public class ValidatorThread implements Runnable {
 
                         if (seen[value]) {
                             report.addError(
-                                "Duplicate in BOX " + box + 
-                                " value = " + value +
-                                " at (" + (row+1) + "," + (col+1) + ")"
+                                    "Duplicate in BOX " + box
+                                    + " value = " + value
+                                    + " at (" + (row + 1) + "," + (col + 1) + ")"
                             );
                         }
 

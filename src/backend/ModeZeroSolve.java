@@ -10,10 +10,10 @@ package backend;
 
 public class ModeZeroSolve implements SudokuValidator {
 
-    private final int[][] table;
+    private final int[][] board;
 
     public ModeZeroSolve(int[][] board) {
-        this.table = board;
+        this.board = board;
     }
 
     @Override
@@ -26,7 +26,7 @@ public class ModeZeroSolve implements SudokuValidator {
             boolean[] dup = new boolean[10];
 
             for (int j = 0; j < 9; j++) {
-                int v = table[i][j];
+                int v = board[i][j];
                 if (v < 1 || v > 9) {
                     continue;
                 }
@@ -44,7 +44,7 @@ public class ModeZeroSolve implements SudokuValidator {
                     boolean first = true;
 
                     for (int j = 0; j < 9; j++) {
-                        if (table[i][j] == v) {
+                        if (board[i][j] == v) {
                             if (!first) {
                                 pos.append(", ");
                             }
@@ -65,7 +65,7 @@ public class ModeZeroSolve implements SudokuValidator {
             boolean[] dup = new boolean[10];
 
             for (int j = 0; j < 9; j++) {
-                int v = table[j][i];
+                int v = board[j][i];
                 if (v < 1 || v > 9) {
                     continue;
                 }
@@ -82,7 +82,7 @@ public class ModeZeroSolve implements SudokuValidator {
                     boolean first = true;
 
                     for (int j = 0; j < 9; j++) {
-                        if (table[j][i] == v) {
+                        if (board[j][i] == v) {
                             if (!first) {
                                 pos.append(", ");
                             }
@@ -113,7 +113,7 @@ public class ModeZeroSolve implements SudokuValidator {
             // scan the 3x3 box
             for (int r = r0; r < r0 + 3; r++) {
                 for (int c = c0; c < c0 + 3; c++) {
-                    int v = table[r][c];
+                    int v = board[r][c];
                     if (v < 1 || v > 9) {
                         continue;
                     }
@@ -133,7 +133,7 @@ public class ModeZeroSolve implements SudokuValidator {
 
                     for (int r = r0; r < r0 + 3; r++) {
                         for (int c = c0; c < c0 + 3; c++) {
-                            if (table[r][c] == v) {
+                            if (board[r][c] == v) {
                                 if (!first) {
                                     pos.append(", ");
                                 }

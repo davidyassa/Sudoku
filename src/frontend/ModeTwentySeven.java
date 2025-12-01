@@ -34,10 +34,10 @@ public class ModeTwentySeven extends JPanel {
         add(scroll);
 
         back.addActionListener(e -> frame.previousPanel());
-        run.addActionListener(e -> run27(out));
+        run.addActionListener(e -> runMode(out));
     }
 
-    private void run27(JTextArea out) {
+    private void runMode(JTextArea out) {
         if (view.getCurrentFilePath() == null) {
             JOptionPane.showMessageDialog(this, "Open a CSV first!", "Error", JOptionPane.ERROR_MESSAGE);
             return;
