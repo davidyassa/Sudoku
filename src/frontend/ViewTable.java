@@ -1,3 +1,7 @@
+/*
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Main.java to edit this template
+ */
 package frontend;
 
 import backend.csvManager;
@@ -18,48 +22,36 @@ public class ViewTable extends JPanel {
         this.frame = frame;
         setLayout(new BorderLayout());
 
-        JButton openButton = new JButton("Open CSV File");
-        add(openButton, BorderLayout.NORTH);
+        // ======= TOP BAR =======
+        JPanel top = new JPanel();
+        JButton openButton = new JButton("Open CSV");
+        top.add(openButton);
+        add(top, BorderLayout.NORTH);
 
-        JButton exitButton = new JButton("Exit");
-        add(exitButton, BorderLayout.SOUTH);
-
+        // ======= BOTTOM BUTTONS =======
+        JPanel bottom = new JPanel();
         JButton mode0Button = new JButton("Mode 0");
-        mode0Button.setBounds(200, 492, 100, 30);
-        add(mode0Button);
-
         JButton mode3Button = new JButton("Mode 3");
-        mode3Button.setBounds(350, 492, 100, 30);
-        add(mode3Button);
-
         JButton mode27Button = new JButton("Mode 27");
-        mode27Button.setBounds(500, 492, 100, 30);
-        add(mode27Button);
+        JButton exitButton = new JButton("Exit");
 
-        mode0Button.addActionListener(e -> frame.switchPanel(new ModeZero(frame, this)));
-        mode3Button.addActionListener(e -> frame.switchPanel(new ModeThree(frame)));
-        mode27Button.addActionListener(e -> frame.switchPanel(new ModeTwentySeven(frame, this)));
-        exitButton.addActionListener(e -> System.exit(0));
-        openButton.addActionListener(e -> chooseAndLoadCSV());
+        bottom.add(mode0Button);
+        bottom.add(mode3Button);
+        bottom.add(mode27Button);
+        bottom.add(exitButton);
+        add(bottom, BorderLayout.SOUTH);
 
+        // ======= TABLE =======
         table = new JTable(9, 9);
-        table.setTableHeader(null);          // remove header
-        table.setRowHeight(50);              // make squares look good
+        table.setTableHeader(null);
+        table.setRowHeight(50);
         table.setShowGrid(true);
         table.setGridColor(Color.BLACK);
 
-        // PANEL that keeps table SQUARE
-        JPanel centerPanel = new JPanel() {
-            @Override
-            public Dimension getPreferredSize() {
-                int size = Math.min(frame.getWidth(), frame.getHeight() - 100);
-                return new Dimension(size, size);
-            }
-        };
-        centerPanel.setLayout(new BorderLayout());
-        centerPanel.add(table, BorderLayout.CENTER);
-        add(centerPanel, BorderLayout.CENTER);
+        JScrollPane scroll = new JScrollPane(table);
+        add(scroll, BorderLayout.CENTER);
 
+        // ======= BORDER RENDERER =======
         table.setDefaultRenderer(Object.class, new DefaultTableCellRenderer() {
             @Override
             public Component getTableCellRendererComponent(
@@ -69,17 +61,13 @@ public class ViewTable extends JPanel {
                 JLabel cell = (JLabel) super.getTableCellRendererComponent(
                         table, value, isSelected, hasFocus, row, col);
 
-                // Center the numbers
                 cell.setHorizontalAlignment(SwingConstants.CENTER);
-
-                // Bigger font
                 cell.setFont(new Font("SansSerif", Font.BOLD, 22));
 
-                // --- CONSISTENT BORDER LOGIC ---
                 int top = (row == 0) ? 3 : (row % 3 == 0 ? 2 : 1);
                 int left = (col == 0) ? 3 : (col % 3 == 0 ? 2 : 1);
-                int bottom = ((row == 8) ? 3 : ((row + 1) % 3 == 0 ? 2 : 1));
-                int right = ((col == 8) ? 3 : ((col + 1) % 3 == 0 ? 2 : 1));
+                int bottom = (row == 8) ? 3 : ((row + 1) % 3 == 0 ? 2 : 1);
+                int right = (col == 8) ? 3 : ((col + 1) % 3 == 0 ? 2 : 1);
 
                 cell.setBorder(BorderFactory.createMatteBorder(
                         top, left, bottom, right, Color.BLACK));
@@ -88,23 +76,29 @@ public class ViewTable extends JPanel {
             }
         });
 
+        // ======= ACTIONS =======
+        openButton.addActionListener(e -> chooseAndLoadCSV());
+        mode0Button.addActionListener(e -> frame.switchPanel(new ModeZero(frame, this)));
+        mode3Button.addActionListener(e -> frame.switchPanel(new ModeThree(frame, this)));
+        mode27Button.addActionListener(e -> frame.switchPanel(new ModeTwentySeven(frame, this)));
+        exitButton.addActionListener(e -> System.exit(0));
     }
 
     private void chooseAndLoadCSV() {
         JFileChooser fc = new JFileChooser(".");
-        fc.setDialogTitle("Choose a 9x9 Sudoku CSV");
+        fc.setDialogTitle("Choose Sudoku CSV");
 
         if (fc.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) {
             File f = fc.getSelectedFile();
             currentFilePath = f.getAbsolutePath();
-            csvManager cm = csvManager.getInstance(f.getAbsolutePath());
-            int[][] data = cm.getTable();
+
+            csvManager mgr = csvManager.getInstance(currentFilePath);
+            int[][] data = mgr.getTable();
 
             DefaultTableModel model = (DefaultTableModel) table.getModel();
-
-            for (int i = 0; i < 9; i++) {
-                for (int j = 0; j < 9; j++) {
-                    model.setValueAt(data[i][j] == 0 ? "" : data[i][j], i, j);
+            for (int r = 0; r < 9; r++) {
+                for (int c = 0; c < 9; c++) {
+                    model.setValueAt(data[r][c] == 0 ? "" : data[r][c], r, c);
                 }
             }
         }
@@ -113,5 +107,4 @@ public class ViewTable extends JPanel {
     public String getCurrentFilePath() {
         return currentFilePath;
     }
-
 }

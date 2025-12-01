@@ -4,28 +4,58 @@
  */
 package frontend;
 
+import backend.*;
 import main.FrameManager;
 import javax.swing.*;
 
-/**
- *
- * @author DELL 7550
- */
 public class ModeThree extends JPanel {
 
-    public ModeThree(FrameManager frame) {
-        super();
+    private FrameManager frame;
+    private ViewTable view;
+
+    public ModeThree(FrameManager frame, ViewTable viewTable) {
+        this.frame = frame;
+        this.view = viewTable;
+
         setLayout(null);
 
-        JButton exitButton = new JButton("Exit");
-        exitButton.setBounds(95, 10, 75, 30);
-        add(exitButton);
+        JButton back = new JButton("Return");
+        back.setBounds(20, 20, 100, 30);
+        add(back);
 
-        JButton backButton = new JButton("Return");
-        backButton.setBounds(10, 10, 75, 30);
-        add(backButton);
+        JButton run = new JButton("RUN Mode 3");
+        run.setBounds(300, 70, 200, 40);
+        add(run);
 
-        exitButton.addActionListener(e -> System.exit(0));
-        backButton.addActionListener(e -> frame.previousPanel());
+        JTextArea out = new JTextArea();
+        out.setEditable(false);
+        JScrollPane scroll = new JScrollPane(out);
+        scroll.setBounds(50, 140, 700, 380);
+        add(scroll);
+
+        back.addActionListener(e -> frame.previousPanel());
+        run.addActionListener(e -> runMode(out));
+    }
+
+    private void runMode(JTextArea out) {
+        String file = view.getCurrentFilePath();
+        if (file == null) {
+            JOptionPane.showMessageDialog(this, "Open a CSV first!", "Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
+        int[][] board = csvManager.getInstance().getTable();
+        SudokuValidator v = new ModeThreeSolve(board);
+        ValidationResult r = v.solve();
+
+        out.setText("MODE 3 RESULT:\n");
+        if (r.isValid()) {
+            out.append("\nVALID SUDOKU\n");
+        } else {
+            out.append("\nINVALID\n\n");
+            r.getRowErrors().forEach(e -> out.append(e + "\n"));
+            r.getColErrors().forEach(e -> out.append(e + "\n"));
+            r.getBoxErrors().forEach(e -> out.append(e + "\n"));
+        }
     }
 }

@@ -4,43 +4,59 @@
  */
 package frontend;
 
-import backend.ModeZeroSolve;
+import backend.*;
 import main.FrameManager;
 import javax.swing.*;
+import java.awt.*;
 
-/**
- *
- * @author DELL 7550
- */
 public class ModeZero extends JPanel {
 
     private FrameManager frame;
-    private ViewTable viewTable;
-    private ModeZeroSolve solver = new ModeZeroSolve();
+    private ViewTable view;
 
     public ModeZero(FrameManager frame, ViewTable viewTable) {
         this.frame = frame;
-        this.viewTable = viewTable;
+        this.view = viewTable;
 
-        JButton runBtn = new JButton("Run Mode 0");
-        add(runBtn);
+        setLayout(null);
 
-        runBtn.addActionListener(e -> runModeZero());
+        JButton back = new JButton("Return");
+        back.setBounds(20, 20, 100, 30);
+        add(back);
+
+        JButton run = new JButton("RUN Mode 0");
+        run.setBounds(300, 70, 200, 40);
+        add(run);
+
+        JTextArea output = new JTextArea();
+        output.setEditable(false);
+        JScrollPane scroll = new JScrollPane(output);
+        scroll.setBounds(50, 140, 700, 380);
+        add(scroll);
+
+        back.addActionListener(e -> frame.previousPanel());
+        run.addActionListener(e -> runMode(output));
     }
 
-    private void runModeZero() {
-        String file = viewTable.getCurrentFilePath();
-
+    private void runMode(JTextArea out) {
+        String file = view.getCurrentFilePath();
         if (file == null) {
-            JOptionPane.showMessageDialog(this,
-                    "No CSV file is open!",
-                    "Error", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this, "Open a CSV first!", "Error", JOptionPane.ERROR_MESSAGE);
             return;
         }
 
-        int[][] dup = solver.Solve(file);
+        int[][] board = csvManager.getInstance().getTable();
+        SudokuValidator v = new ModeZeroSolve(board);
+        ValidationResult r = v.solve();
 
-        // TODO: show results in UI
-        JOptionPane.showMessageDialog(this, "ModeZero Execute Complete");
+        out.setText("MODE 0 RESULT:\n");
+        if (r.isValid()) {
+            out.append("\nVALID SUDOKU\n");
+        } else {
+            out.append("\nINVALID\n\n");
+            r.getRowErrors().forEach(e -> out.append(e + "\n"));
+            r.getColErrors().forEach(e -> out.append(e + "\n"));
+            r.getBoxErrors().forEach(e -> out.append(e + "\n"));
+        }
     }
 }

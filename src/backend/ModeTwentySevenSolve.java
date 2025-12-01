@@ -4,35 +4,49 @@
  */
 package backend;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
-public class ModeTwentySevenSolve {
+public class ModeTwentySevenSolve implements SudokuValidator {
 
-    public void solve(int[][] board, ValidationReport report) {
+    private final int[][] board;
+
+    public ModeTwentySevenSolve(int[][] board) {
+        this.board = board;
+    }
+
+    @Override
+    public ValidationResult solve() {
+
+        ValidationReport report = new ValidationReport();
         List<Thread> threads = new ArrayList<>();
 
-        
         for (int i = 0; i < 9; i++) {
-            threads.add(new Thread(TaskFactory.createChecker(board, RegionType.ROW, i, report)));
-            threads.add(new Thread(TaskFactory.createChecker(board, RegionType.COLUMN, i, report)));
-            threads.add(new Thread(TaskFactory.createChecker(board, RegionType.BOX, i, report)));
+            threads.add(new Thread(new CheckerTask(board, RegionType.ROW, i, report)));
+            threads.add(new Thread(new CheckerTask(board, RegionType.COLUMN, i, report)));
+            threads.add(new Thread(new CheckerTask(board, RegionType.BOX, i, report)));
         }
 
-        long startTime = System.nanoTime();
-
-        for (Thread t : threads) t.start();
-
+        for (Thread t : threads) {
+            t.start();
+        }
         for (Thread t : threads) {
             try {
                 t.join();
-            } catch (InterruptedException e) {
-                Thread.currentThread().interrupt(); 
-                System.err.println("Thread interrupted");
+            } catch (Exception e) {
             }
         }
-        
-        long endTime = System.nanoTime();
-        System.out.println("Mode 27 Execution Time: " + (endTime - startTime) / 1000000 + " ms");
+
+        ValidationResult result = new ValidationResult();
+        for (String err : report.getErrors()) {
+            if (err.startsWith("ROW")) {
+                result.addRowError(err);
+            } else if (err.startsWith("COLUMN")) {
+                result.addColError(err);
+            } else {
+                result.addBoxError(err);
+            }
+        }
+
+        return result;
     }
 }

@@ -4,71 +4,58 @@
  */
 package frontend;
 
-import backend.ModeTwentySevenSolve;
-import backend.ValidationReport;
-import backend.csvManager;
+import backend.*;
 import main.FrameManager;
 import javax.swing.*;
-import java.awt.Font;
 
 public class ModeTwentySeven extends JPanel {
 
     private FrameManager frame;
-    private ViewTable viewTable;
-    private JTextArea resultArea; 
+    private ViewTable view;
+
     public ModeTwentySeven(FrameManager frame, ViewTable viewTable) {
         this.frame = frame;
-        this.viewTable = viewTable;
-        setLayout(null);
-        JButton backButton = new JButton("Return");
-        backButton.setBounds(10, 10, 100, 30);
-        add(backButton);
+        this.view = viewTable;
 
-        JButton runButton = new JButton("RUN CHECK (27 Threads)");
-        runButton.setBounds(250, 50, 300, 50);
-        runButton.setFont(new Font("Arial", Font.BOLD, 16));
-        add(runButton);
-        
-        JButton exitButton = new JButton("Exit");
-        exitButton.setBounds(680, 10, 80, 30);
-        add(exitButton);
-        resultArea = new JTextArea();
-        resultArea.setEditable(false);
-        JScrollPane scroll = new JScrollPane(resultArea);
-        scroll.setBounds(50, 120, 700, 400);
+        setLayout(null);
+
+        JButton back = new JButton("Return");
+        back.setBounds(20, 20, 100, 30);
+        add(back);
+
+        JButton run = new JButton("RUN Mode 27");
+        run.setBounds(300, 70, 200, 40);
+        add(run);
+
+        JTextArea out = new JTextArea();
+        out.setEditable(false);
+        JScrollPane scroll = new JScrollPane(out);
+        scroll.setBounds(50, 140, 700, 380);
         add(scroll);
-        exitButton.addActionListener(e -> System.exit(0));
-        backButton.addActionListener(e -> frame.previousPanel());
-        
-        runButton.addActionListener(e -> runValidation());
+
+        back.addActionListener(e -> frame.previousPanel());
+        run.addActionListener(e -> run27(out));
     }
 
-    private void runValidation() {
-        String filePath = viewTable.getCurrentFilePath();
-        
-        if (filePath == null) {
-            JOptionPane.showMessageDialog(this, "No CSV file selected! Go back and Open CSV.", "Error", JOptionPane.ERROR_MESSAGE);
+    private void run27(JTextArea out) {
+        if (view.getCurrentFilePath() == null) {
+            JOptionPane.showMessageDialog(this, "Open a CSV first!", "Error", JOptionPane.ERROR_MESSAGE);
             return;
         }
 
-        csvManager manager = csvManager.getInstance(filePath);
-        int[][] board = manager.getTable();
+        int[][] board = csvManager.getInstance().getTable();
+        SudokuValidator v = new ModeTwentySevenSolve(board);
 
-        ValidationReport report = new ValidationReport();
-        ModeTwentySevenSolve solver = new ModeTwentySevenSolve();
+        ValidationResult r = v.solve();
 
-        resultArea.setText("Running 27-Thread Analysis...\n");
-        
-        solver.solve(board, report);
-
-        if (report.isValid()) {
-            resultArea.append("\n RESULT: VALID SUDOKU\n");
-            JOptionPane.showMessageDialog(this, "Valid Sudoku!");
+        out.setText("MODE 27 RESULT:\n");
+        if (r.isValid()) {
+            out.append("\nVALID SUDOKU\n");
         } else {
-            resultArea.append("\n RESULT: INVALID SUDOKU\nFound Errors:\n");
-            for (String err : report.getErrors()) {
-                resultArea.append("- " + err + "\n");
-            }
+            out.append("\nINVALID\n\n");
+            r.getRowErrors().forEach(e -> out.append(e + "\n"));
+            r.getColErrors().forEach(e -> out.append(e + "\n"));
+            r.getBoxErrors().forEach(e -> out.append(e + "\n"));
         }
     }
 }

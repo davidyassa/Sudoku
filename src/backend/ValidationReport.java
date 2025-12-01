@@ -1,4 +1,3 @@
-
 package backend;
 
 import java.util.concurrent.ConcurrentLinkedQueue;
@@ -8,8 +7,8 @@ import java.util.ArrayList;
 
 public class ValidationReport {
 
-    private ConcurrentLinkedQueue<String> errors = new ConcurrentLinkedQueue<>();
-    private AtomicBoolean valid = new AtomicBoolean(true);
+    private final ConcurrentLinkedQueue<String> errors = new ConcurrentLinkedQueue<>();
+    private final AtomicBoolean valid = new AtomicBoolean(true);
 
     public void addError(String error) {
         valid.set(false);

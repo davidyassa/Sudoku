@@ -2,105 +2,154 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package backend;
-
 /**
  *
  * @author DELL 7550
  */
-public class ModeZeroSolve {
+package backend;
 
-    private csvManager csvm;
-    private int[][] table;
+public class ModeZeroSolve implements SudokuValidator {
 
-    public int[][] Solve(String filename) {
-        csvm = csvManager.getInstance(filename);
-        table = csvm.getTable();
-        final int ROW_DUP = 1;
-        final int COL_DUP = 2;
-        final int BOX_DUP = 3;
-        int[][] dup = new int[9][9];
+    private final int[][] table;
 
-        //ROWS and COLUMNS//
+    public ModeZeroSolve(int[][] board) {
+        this.table = board;
+    }
+
+    @Override
+    public ValidationResult solve() {
+        ValidationResult vr = new ValidationResult();
+
+        // ROWS 
         for (int i = 0; i < 9; i++) {
-            int[] freqR = new int[9];
-            int[] freqC = new int[9];
-            int[] firstOccR = new int[9];
-            int[] firstOccC = new int[9];
+            boolean[] seen = new boolean[10];
+            boolean[] dup = new boolean[10];
 
             for (int j = 0; j < 9; j++) {
-                int r = table[i][j];
-                int c = table[j][i];
-
-                // ROW check (r)
-                if (r != 0) {
-                    int fr = ++freqR[r - 1]; // mapping 1–9 to 0–8
-
-                    if (fr == 1) {
-                        firstOccR[r - 1] = j;
-                    }
-                    if (fr > 1) {
-                        dup[i][firstOccR[r - 1]] = ROW_DUP;
-                        dup[i][j] = ROW_DUP;
-                    }
+                int v = table[i][j];
+                if (v < 1 || v > 9) {
+                    continue;
                 }
 
-                // COLUMN check (c)
-                if (c != 0) {
-                    int fc = ++freqC[c - 1];
+                if (seen[v]) {
+                    dup[v] = true;
+                }
+                seen[v] = true;
+            }
 
-                    if (fc == 1) {
-                        firstOccC[c - 1] = j;
+            for (int v = 1; v <= 9; v++) {
+                if (dup[v]) {
+                    // collect positions
+                    StringBuilder pos = new StringBuilder("[");
+                    boolean first = true;
+
+                    for (int j = 0; j < 9; j++) {
+                        if (table[i][j] == v) {
+                            if (!first) {
+                                pos.append(", ");
+                            }
+                            pos.append(j + 1);
+                            first = false;
+                        }
                     }
-                    if (fc > 1) {
-                        dup[firstOccC[c - 1]][i] = COL_DUP;
-                        dup[j][i] = COL_DUP;
-                    }
+
+                    pos.append("]");
+                    vr.addRowError("ROW " + (i + 1) + ", #" + v + ", " + pos);
                 }
             }
         }
 
-        //example box 0 rows = {{0,0,0},{1,1,1},{2,2,2}}, cols = {{0,1,2},{0,1,2},{0,1,2}}
-        //example box 2 rows = {{0,0,0},{1,1,1},{2,2,2}}, cols = {{6,7,8},{6,7,8},{6,7,8}}
-        //example box 3 rows = {{3,3,3},{4,4,4},{5,5,5}}, cols = {{0,1,2},{0,1,2},{0,1,2}}
-        //example box 4 rows = {{3,3,3},{4,4,4},{5,5,5}}, cols = {{3,4,5},{3,4,5},{3,4,5}}
-        // BOXES// (3x3)
-        for (int br = 0; br < 3; br++) {          // box row index {0,1,2}
-            for (int bc = 0; bc < 3; bc++) {      // box col index {0,1,2}
+        // COLUMNS
+        for (int i = 0; i < 9; i++) {
+            boolean[] seen = new boolean[10];
+            boolean[] dup = new boolean[10];
 
-                int[] freq = new int[9];
-                int[] firstOcc = new int[9];
+            for (int j = 0; j < 9; j++) {
+                int v = table[j][i];
+                if (v < 1 || v > 9) {
+                    continue;
+                }
 
-                for (int i = 0; i < 3; i++) {
-                    for (int j = 0; j < 3; j++) {
+                if (seen[v]) {
+                    dup[v] = true;
+                }
+                seen[v] = true;
+            }
 
-                        int row = br * 3 + i;     // (i, i+1, i+2) → same box row
-                        int col = bc * 3 + j;     // (j, j+1, j+2) → same box col
+            for (int v = 1; v <= 9; v++) {
+                if (dup[v]) {
+                    StringBuilder pos = new StringBuilder("[");
+                    boolean first = true;
 
-                        int b = table[row][col];  // value inside box 1 → 9
-
-                        if (b != 0) {
-                            int fb = ++freq[b - 1];
-
-                            if (fb == 1) {
-                                firstOcc[b - 1] = row * 9 + col;
-                                // storing position as a single number
+                    for (int j = 0; j < 9; j++) {
+                        if (table[j][i] == v) {
+                            if (!first) {
+                                pos.append(", ");
                             }
+                            pos.append(j + 1);
+                            first = false;
+                        }
+                    }
 
-                            if (fb > 1) {
-                                int pos = firstOcc[b - 1];
-                                int r1 = pos / 9;     // decode row
-                                int c1 = pos % 9;     // decode col
+                    pos.append("]");
+                    vr.addColError("COLUMN " + (i + 1) + ", #" + v + ", " + pos);
+                }
+            }
+        }
 
-                                dup[r1][c1] = BOX_DUP;
-                                dup[row][col] = BOX_DUP;
+        // -------------------- BOXES (3x3) --------------------
+        // example box 0 rows = {{0,0,0},{1,1,1},{2,2,2}}, cols = {{0,1,2},{0,1,2},{0,1,2}}
+        // example box 2 rows = {{0,0,0},{1,1,1},{2,2,2}}, cols = {{6,7,8},{6,7,8},{6,7,8}}
+        // example box 3 rows = {{3,3,3},{4,4,4},{5,5,5}}, cols = {{0,1,2},{0,1,2},{0,1,2}}
+        // example box 4 rows = {{3,3,3},{4,4,4},{5,5,5}}, cols = {{3,4,5},{3,4,5},{3,4,5}}
+        for (int b = 0; b < 9; b++) {
+
+            int r0 = (b / 3) * 3; // (i, i+1, i+2) → same box row group
+            int c0 = (b % 3) * 3; // (j, j+1, j+2) → same box col group
+
+            boolean[] seen = new boolean[10];
+            boolean[] dup = new boolean[10];
+
+            // scan the 3x3 box
+            for (int r = r0; r < r0 + 3; r++) {
+                for (int c = c0; c < c0 + 3; c++) {
+                    int v = table[r][c];
+                    if (v < 1 || v > 9) {
+                        continue;
+                    }
+
+                    if (seen[v]) {
+                        dup[v] = true;
+                    }
+                    seen[v] = true;
+                }
+            }
+
+            // clean final message
+            for (int v = 1; v <= 9; v++) {
+                if (dup[v]) {
+                    StringBuilder pos = new StringBuilder("[");
+                    boolean first = true;
+
+                    for (int r = r0; r < r0 + 3; r++) {
+                        for (int c = c0; c < c0 + 3; c++) {
+                            if (table[r][c] == v) {
+                                if (!first) {
+                                    pos.append(", ");
+                                }
+                                pos.append("(" + (r + 1) + "," + (c + 1) + ")");
+                                first = false;
                             }
                         }
                     }
+
+                    pos.append("]");
+                    vr.addBoxError("BOX " + (b + 1) + ", #" + v + ", " + pos);
                 }
             }
         }
 
-        return dup;
+        return vr;
     }
+
 }
