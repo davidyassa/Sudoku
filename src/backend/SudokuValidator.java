@@ -8,7 +8,7 @@ package backend;
  *
  * @author DELL 7550
  */
-
 public interface SudokuValidator {
+
     ValidationResult validate();
 }

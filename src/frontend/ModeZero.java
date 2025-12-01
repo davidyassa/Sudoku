@@ -7,7 +7,6 @@ package frontend;
 import backend.*;
 import main.FrameManager;
 import javax.swing.*;
-import java.awt.*;
 
 public class ModeZero extends JPanel {
 
