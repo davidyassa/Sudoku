@@ -110,25 +110,4 @@ public class SudokuTester {
         System.out.println("Detailed validation result (last run):");
         SudokuReporter.printResult(lastResult);
     }
-
-    /**
-     * CLI runner: java backend.SudokuTester path/to/board.csv [runs]
-     */
-    public static void main(String[] args) {
-        if (args.length == 0) {
-            System.out.println("Usage: java backend.SudokuTester <csv-file> [runs]");
-            return;
-        }
-        String file = args[0];
-        int runs = DEFAULT_RUNS;
-        if (args.length >= 2) {
-            try {
-                runs = Integer.parseInt(args[1]);
-            } catch (NumberFormatException ignored) {
-            }
-        }
-
-        SudokuTester tester = new SudokuTester();
-        tester.runOnce(file, runs);
-    }
 }
