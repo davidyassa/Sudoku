@@ -10,5 +10,5 @@ package backend;
  */
 
 public interface SudokuValidator {
-    ValidationResult solve();
+    ValidationResult validate();
 }

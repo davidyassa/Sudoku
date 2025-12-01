@@ -46,7 +46,7 @@ public class ModeThree extends JPanel {
 
         int[][] board = csvManager.getInstance().getTable();
         SudokuValidator v = new ModeThreeSolve(board);
-        ValidationResult r = v.solve();
+        ValidationResult r = v.validate();
 
         out.setText("MODE 3 RESULT:\n");
         if (r.isValid()) {

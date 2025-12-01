@@ -34,6 +34,11 @@ public class ViewTable extends JPanel {
         JButton mode3Button = new JButton("Mode 3");
         JButton mode27Button = new JButton("Mode 27");
         JButton exitButton = new JButton("Exit");
+        JButton testButton = new JButton("Performance Test");
+        testButton.setBounds(620, 492, 150, 30);
+        add(testButton);
+
+        testButton.addActionListener(e -> frame.switchPanel(new ModeTestPanel(frame, this)));
 
         bottom.add(mode0Button);
         bottom.add(mode3Button);

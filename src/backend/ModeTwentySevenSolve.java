@@ -15,7 +15,7 @@ public class ModeTwentySevenSolve implements SudokuValidator {
     }
 
     @Override
-    public ValidationResult solve() {
+    public ValidationResult validate() {
 
         ValidationReport report = new ValidationReport();
         List<Thread> threads = new ArrayList<>();

@@ -4,66 +4,131 @@
  */
 package backend;
 
+import java.util.Locale;
+
+/**
+ * SudokuTester
+ *
+ * Usage: new SudokuTester().runOnce("path/to/board.csv", 5); or run from main:
+ * java backend.SudokuTester path/to/board.csv [runs]
+ *
+ * Behavior: - Loads the CSV via csvManager - Warms up each validator once -
+ * Runs each validator `runs` times and prints per-run time + average - Prints
+ * the ValidationResult for correctness comparison
+ */
 public class SudokuTester {
 
-    public void runAllTests(String[] files) {
-        for (String file : files) {
-            testFile(file);
+    private static final int DEFAULT_RUNS = 5;
+
+    /**
+     * Run a full comparison for a single file (with default runs).
+     */
+    public void runOnce(String filepath) {
+        runOnce(filepath, DEFAULT_RUNS);
+    }
+
+    /**
+     * Run a full comparison for a single file, repeating each mode `runs`
+     * times.
+     */
+    public void runOnce(String filepath, int runs) {
+        System.out.println("==== SudokuTester ====");
+        System.out.println("File: " + filepath);
+        System.out.println("Runs per mode: " + runs);
+        System.out.println();
+
+        // initialize csv manager and board
+        csvManager.getInstance(filepath);
+        int[][] board = csvManager.getInstance().getTable();
+
+        // Mode 0
+        System.out.println("Mode 0 (sequential):");
+        benchmarkAndReport("Mode 0", () -> {
+            SudokuValidator v = new ModeZeroSolve(board);
+            return v.validate();
+        }, runs);
+
+        // Mode 3
+        System.out.println("\nMode 3 (3 threads):");
+        benchmarkAndReport("Mode 3", () -> {
+            SudokuValidator v = new ModeThreeSolve(board);
+            return v.validate();
+        }, runs);
+
+        // Mode 27
+        System.out.println("\nMode 27 (27 threads):");
+        benchmarkAndReport("Mode 27", () -> {
+            SudokuValidator v = new ModeTwentySevenSolve(board);
+            return v.validate();
+        }, runs);
+
+        System.out.println("Test Over");
+    }
+
+    /**
+     * Functional interface for running a validation and returning a
+     * ValidationResult.
+     */
+    @FunctionalInterface
+    private interface ValidationRun {
+
+        ValidationResult run();
+    }
+
+    /**
+     * Warm up once, then run the validation `runs` times and print per-run
+     * times and average.
+     */
+    private void benchmarkAndReport(String label, ValidationRun runner, int runs) {
+        // Warm-up (single run, not timed in the same way)
+        ValidationResult warm = runner.run();
+
+        // Print correctness of warm-up (short)
+        System.out.println("Warm-up result (summary): " + (warm.isValid() ? "VALID" : "INVALID"));
+
+        long[] times = new long[runs];
+        ValidationResult lastResult = null;
+
+        for (int i = 0; i < runs; i++) {
+            long t0 = System.nanoTime();
+            lastResult = runner.run();
+            long t1 = System.nanoTime();
+            times[i] = t1 - t0;
+            System.out.printf(Locale.US, "Run %2d: %8.3f ms%n", i + 1, times[i] / 1_000_000.0);
         }
+
+        // average
+        double avgMs = 0;
+        for (long t : times) {
+            avgMs += t / 1_000_000.0;
+        }
+        avgMs /= runs;
+
+        System.out.printf(Locale.US, "Average: %.3f ms%n", avgMs);
+
+        // print the detailed ValidationResult once
+        System.out.println("Detailed validation result (last run):");
+        SudokuReporter.printResult(lastResult);
     }
 
-    private void testFile(String filepath) {
-
-        System.out.println("====================================");
-        System.out.println("Testing file: " + filepath);
-        System.out.println("====================================");
-
-        // load board once
-        int[][] board = csvManager.getInstance(filepath).getTable();
-
-        long t0 = runMode("Mode 0", new ModeZeroSolve(board));
-        long t3 = runMode("Mode 3", new ModeThreeSolve(board));
-        long t27 = runMode("Mode 27", new ModeTwentySevenSolve(board));
-
-        System.out.println("\nExecution Times:");
-        System.out.println("0-mode:  " + t0 + " ms");
-        System.out.println("3-mode:  " + t3 + " ms");
-        System.out.println("27-mode: " + t27 + " ms");
-        System.out.println("----------------------------------------\n");
-    }
-
-    private long runMode(String label, SudokuValidator validator) {
-
-        long start = System.currentTimeMillis();
-        ValidationResult result = validator.solve();
-        long end = System.currentTimeMillis();
-
-        System.out.println(label + " result:");
-        printResult(result);
-
-        return end - start;
-    }
-
-    private void printResult(ValidationResult r) {
-        if (r.isValid()) {
-            System.out.println("VALID");
+    /**
+     * CLI runner: java backend.SudokuTester path/to/board.csv [runs]
+     */
+    public static void main(String[] args) {
+        if (args.length == 0) {
+            System.out.println("Usage: java backend.SudokuTester <csv-file> [runs]");
             return;
         }
-
-        System.out.println("INVALID\n");
-
-        for (String err : r.getRowErrors()) {
-            System.out.println(err);
+        String file = args[0];
+        int runs = DEFAULT_RUNS;
+        if (args.length >= 2) {
+            try {
+                runs = Integer.parseInt(args[1]);
+            } catch (NumberFormatException ignored) {
+            }
         }
 
-        for (String err : r.getColErrors()) {
-            System.out.println(err);
-        }
-
-        for (String err : r.getBoxErrors()) {
-            System.out.println(err);
-        }
-
-        System.out.println();
+        SudokuTester tester = new SudokuTester();
+        tester.runOnce(file, runs);
     }
 }

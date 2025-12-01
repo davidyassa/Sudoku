@@ -47,7 +47,7 @@ public class ModeZero extends JPanel {
 
         int[][] board = csvManager.getInstance().getTable();
         SudokuValidator v = new ModeZeroSolve(board);
-        ValidationResult r = v.solve();
+        ValidationResult r = v.validate();
 
         out.setText("MODE 0 RESULT:\n");
         if (r.isValid()) {

@@ -17,7 +17,7 @@ public class ModeZeroSolve implements SudokuValidator {
     }
 
     @Override
-    public ValidationResult solve() {
+    public ValidationResult validate() {
         ValidationResult vr = new ValidationResult();
 
         // ROWS 

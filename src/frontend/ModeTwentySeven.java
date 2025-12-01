@@ -46,7 +46,7 @@ public class ModeTwentySeven extends JPanel {
         int[][] board = csvManager.getInstance().getTable();
         SudokuValidator v = new ModeTwentySevenSolve(board);
 
-        ValidationResult r = v.solve();
+        ValidationResult r = v.validate();
 
         out.setText("MODE 27 RESULT:\n");
         if (r.isValid()) {
