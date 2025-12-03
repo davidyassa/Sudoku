@@ -9,9 +9,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-/**
- * ValidationResult stores human-readable errors separated by region types.
- */
 public class ValidationResult {
 
     private final List<String> rowErrors = new ArrayList<>();
@@ -46,10 +43,6 @@ public class ValidationResult {
         return boxErrors;
     }
 
-    /**
-     * Convert a bit-flag dup[][] and original table into a ValidationResult.
-     * bitmask: ROW=1, COL=2, BOX=4
-     */
     public static ValidationResult fromDup(int[][] dup, int[][] table) {
         ValidationResult vr = new ValidationResult();
         final int ROW = 1, COL = 2, BOX = 4;

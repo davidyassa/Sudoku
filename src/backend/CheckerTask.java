@@ -31,28 +31,15 @@ public class CheckerTask implements Runnable {
 
     @Override
     public void run() {
-        if (index == -1) {
-            // check all indices of this type
-            for (int i = 0; i < 9; i++) {
-                switch (type) {
-                    case ROW ->
-                        checkRow(i);
-                    case COLUMN ->
-                        checkColumn(i);
-                    case BOX ->
-                        checkBox(i);
-                }
-            }
-        } else {
-            switch (type) {
-                case ROW ->
-                    checkRow(index);
-                case COLUMN ->
-                    checkColumn(index);
-                case BOX ->
-                    checkBox(index);
-            }
+        switch (type) {
+            case ROW ->
+                checkRow(index);
+            case COLUMN ->
+                checkColumn(index);
+            case BOX ->
+                checkBox(index);
         }
+
     }
 
     private void checkRow(int r) {

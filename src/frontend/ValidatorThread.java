@@ -22,15 +22,12 @@ public class ValidatorThread implements Runnable {
     public void run() {
 
         switch (type) {
-            case ROW:
+            case ROW ->
                 checkRows();
-                break;
-            case COLUMN:
+            case COLUMN ->
                 checkColumns();
-                break;
-            case BOX:
+            case BOX ->
                 checkBoxes();
-                break;
         }
 
         System.out.println(type + " THREAD FINISHED ✅");

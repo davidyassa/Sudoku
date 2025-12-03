@@ -22,31 +22,19 @@ public class ViewTable extends JPanel {
         this.frame = frame;
         setLayout(new BorderLayout());
 
-        // ======= TOP BAR =======
         JPanel top = new JPanel();
         JButton openButton = new JButton("Open CSV");
         top.add(openButton);
         add(top, BorderLayout.NORTH);
 
-        // ======= BOTTOM BUTTONS =======
         JPanel bottom = new JPanel();
-        JButton mode0Button = new JButton("Mode 0");
-        JButton mode3Button = new JButton("Mode 3");
-        JButton mode27Button = new JButton("Mode 27");
+        JButton TestButton = new JButton("Test");
         JButton exitButton = new JButton("Exit");
-        JButton testButton = new JButton("Performance Test");
-        testButton.setBounds(620, 492, 150, 30);
-        add(testButton);
 
-        testButton.addActionListener(e -> frame.switchPanel(new ModeTestPanel(frame, this)));
-
-        bottom.add(mode0Button);
-        bottom.add(mode3Button);
-        bottom.add(mode27Button);
+        bottom.add(TestButton);
         bottom.add(exitButton);
         add(bottom, BorderLayout.SOUTH);
 
-        // ======= TABLE =======
         table = new JTable(9, 9);
         table.setTableHeader(null);
         table.setRowHeight(50);
@@ -56,7 +44,6 @@ public class ViewTable extends JPanel {
         JScrollPane scroll = new JScrollPane(table);
         add(scroll, BorderLayout.CENTER);
 
-        // ======= BORDER RENDERER =======
         table.setDefaultRenderer(Object.class, new DefaultTableCellRenderer() {
             @Override
             public Component getTableCellRendererComponent(
@@ -81,11 +68,8 @@ public class ViewTable extends JPanel {
             }
         });
 
-        // ======= ACTIONS =======
         openButton.addActionListener(e -> chooseAndLoadCSV());
-        mode0Button.addActionListener(e -> frame.switchPanel(new ModeZero(frame, this)));
-        mode3Button.addActionListener(e -> frame.switchPanel(new ModeThree(frame, this)));
-        mode27Button.addActionListener(e -> frame.switchPanel(new ModeTwentySeven(frame, this)));
+        TestButton.addActionListener(e -> frame.switchPanel(new Test(frame, this)));
         exitButton.addActionListener(e -> System.exit(0));
     }
 

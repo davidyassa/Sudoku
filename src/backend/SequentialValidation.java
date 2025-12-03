@@ -2,15 +2,18 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
+/**
+ *
+ * @author DELL 7550
+ */
 package backend;
 
-import java.util.*;
-
-public class ModeTwentySevenSolve implements SudokuValidator {
+public class SequentialValidation implements SudokuValidator {
 
     private final int[][] board;
+    private CheckerTask ct;
 
-    public ModeTwentySevenSolve(int[][] board) {
+    public SequentialValidation(int[][] board) {
         this.board = board;
     }
 
@@ -18,22 +21,13 @@ public class ModeTwentySevenSolve implements SudokuValidator {
     public ValidationResult validate() {
 
         ValidationReport report = new ValidationReport();
-        List<Thread> threads = new ArrayList<>();
-
         for (int i = 0; i < 9; i++) {
-            threads.add(new Thread(new CheckerTask(board, RegionType.ROW, i, report)));
-            threads.add(new Thread(new CheckerTask(board, RegionType.COLUMN, i, report)));
-            threads.add(new Thread(new CheckerTask(board, RegionType.BOX, i, report)));
-        }
-
-        for (Thread t : threads) {
-            t.start();
-        }
-        for (Thread t : threads) {
-            try {
-                t.join();
-            } catch (Exception e) {
-            }
+            ct = new CheckerTask(board, RegionType.ROW, i, report);
+            ct.run();
+            ct = new CheckerTask(board, RegionType.COLUMN, i, report);
+            ct.run();
+            ct = new CheckerTask(board, RegionType.BOX, i, report);
+            ct.run();
         }
 
         ValidationResult result = new ValidationResult();
@@ -49,4 +43,5 @@ public class ModeTwentySevenSolve implements SudokuValidator {
 
         return result;
     }
+
 }

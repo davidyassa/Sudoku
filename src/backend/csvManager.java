@@ -4,11 +4,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.Scanner;
 
-/**
- * csvManager - Singleton CSV loader for 9x9 Sudoku boards. Supports loading a
- * CSV file ONCE per instance, cleanly aligned with ModeZeroSolve /
- * ModeThreeSolve / ModeTwentySevenSolve.
- */
+// Singleton
 public class csvManager {
 
     private static csvManager instance;

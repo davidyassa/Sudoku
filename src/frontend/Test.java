@@ -8,12 +8,12 @@ import backend.*;
 import main.FrameManager;
 import javax.swing.*;
 
-public class ModeTwentySeven extends JPanel {
+public class Test extends JPanel {
 
     private FrameManager frame;
     private ViewTable view;
 
-    public ModeTwentySeven(FrameManager frame, ViewTable viewTable) {
+    public Test(FrameManager frame, ViewTable viewTable) {
         this.frame = frame;
         this.view = viewTable;
 
@@ -23,32 +23,32 @@ public class ModeTwentySeven extends JPanel {
         back.setBounds(20, 20, 100, 30);
         add(back);
 
-        JButton run = new JButton("RUN Mode 27");
+        JButton run = new JButton("RUN TEST");
         run.setBounds(300, 70, 200, 40);
         add(run);
 
-        JTextArea out = new JTextArea();
-        out.setEditable(false);
-        JScrollPane scroll = new JScrollPane(out);
+        JTextArea output = new JTextArea();
+        output.setEditable(false);
+        JScrollPane scroll = new JScrollPane(output);
         scroll.setBounds(50, 140, 700, 380);
         add(scroll);
 
         back.addActionListener(e -> frame.previousPanel());
-        run.addActionListener(e -> runMode(out));
+        run.addActionListener(e -> run(output));
     }
 
-    private void runMode(JTextArea out) {
-        if (view.getCurrentFilePath() == null) {
+    private void run(JTextArea out) {
+        String file = view.getCurrentFilePath();
+        if (file == null) {
             JOptionPane.showMessageDialog(this, "Open a CSV first!", "Error", JOptionPane.ERROR_MESSAGE);
             return;
         }
 
         int[][] board = csvManager.getInstance().getTable();
-        SudokuValidator v = new ModeTwentySevenSolve(board);
-
+        SudokuValidator v = new SequentialValidation(board);
         ValidationResult r = v.validate();
 
-        out.setText("MODE 27 RESULT:\n");
+        out.setText("TEST RESULT:\n");
         if (r.isValid()) {
             out.append("\nVALID SUDOKU\n");
         } else {
