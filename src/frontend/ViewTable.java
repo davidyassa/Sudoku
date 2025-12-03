@@ -74,7 +74,7 @@ public class ViewTable extends JPanel {
     }
 
     private void chooseAndLoadCSV() {
-        JFileChooser fc = new JFileChooser(".");
+        JFileChooser fc = new JFileChooser("./TestCases");
         fc.setDialogTitle("Choose Sudoku CSV");
 
         if (fc.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) {
