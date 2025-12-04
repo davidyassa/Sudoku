@@ -45,11 +45,15 @@ public class CheckerTask implements Runnable {
     private void checkRow(int r) {
         boolean[] seen = new boolean[10];
         Set<Integer> dupValues = new HashSet<>();
+        Set<Integer> emptyValues = new HashSet<>();
         // detect duplicates values
         for (int c = 0; c < 9; c++) {
             int v = board[r][c];
-            if (v < 1 || v > 9) {
+            if (v < 0 || v > 9) {
                 continue;
+            }
+            if (v == 0) {
+                emptyValues.add(v);
             }
             if (seen[v]) {
                 dupValues.add(v);
@@ -59,8 +63,7 @@ public class CheckerTask implements Runnable {
         if (!dupValues.isEmpty()) {
             // For each duplicated value collect positions (1-based columns)
             for (int val : dupValues) {
-                StringBuilder positions = new StringBuilder();
-                positions.append("[");
+                StringBuilder positions = new StringBuilder("[");
                 boolean first = true;
                 for (int c = 0; c < 9; c++) {
                     if (board[r][c] == val) {
@@ -74,6 +77,24 @@ public class CheckerTask implements Runnable {
                 positions.append("]");
                 String msg = String.format("ROW %d, #%d, %s", r + 1, val, positions.toString());
                 report.addError(msg);
+            }
+        }
+        if (!emptyValues.isEmpty()) {
+            for (int val : emptyValues) {
+                StringBuilder positions = new StringBuilder("[");
+                boolean first = true;
+                for (int c = 0; c < 9; c++) {
+                    if (board[r][c] == 0) {
+                        if (!first) {
+                            positions.append(", ");
+                        }
+                        positions.append(r + 1);
+                        first = false;
+                    }
+                }
+                positions.append("]");
+                String msg = String.format("ROW %d, %s", r + 1, val, positions.toString());
+                report.addNull(msg);
             }
         }
     }
@@ -93,11 +114,10 @@ public class CheckerTask implements Runnable {
         }
         if (!dupValues.isEmpty()) {
             for (int val : dupValues) {
-                StringBuilder positions = new StringBuilder();
-                positions.append("[");
+                StringBuilder positions = new StringBuilder("[");
                 boolean first = true;
                 for (int r = 0; r < 9; r++) {
-                    if (board[r][c] == val) {
+                    if (board[r][c] == 0) {
                         if (!first) {
                             positions.append(", ");
                         }
@@ -131,8 +151,7 @@ public class CheckerTask implements Runnable {
         }
         if (!dupValues.isEmpty()) {
             for (int val : dupValues) {
-                StringBuilder positions = new StringBuilder();
-                positions.append("[");
+                StringBuilder positions = new StringBuilder("[");
                 boolean first = true;
                 for (int r = sr; r < sr + 3; r++) {
                     for (int c = sc; c < sc + 3; c++) {

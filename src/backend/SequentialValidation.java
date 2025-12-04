@@ -21,12 +21,9 @@ public class SequentialValidation {
 
         ValidationReport report = new ValidationReport();
         for (int i = 0; i < 9; i++) {
-            ct = new CheckerTask(board, RegionType.ROW, i, report);
-            ct.run();
-            ct = new CheckerTask(board, RegionType.COLUMN, i, report);
-            ct.run();
-            ct = new CheckerTask(board, RegionType.BOX, i, report);
-            ct.run();
+            new CheckerTask(board, RegionType.ROW, i, report).run();
+            new CheckerTask(board, RegionType.COLUMN, i, report).run();
+            new CheckerTask(board, RegionType.BOX, i, report).run();
         }
 
         ValidationResult result = new ValidationResult();
@@ -38,6 +35,10 @@ public class SequentialValidation {
             } else {
                 result.addBoxError(err);
             }
+        }
+        for (String err : report.getNulls()) {
+            result.addNull(err);
+
         }
 
         return result;

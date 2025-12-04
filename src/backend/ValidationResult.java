@@ -15,6 +15,8 @@ public class ValidationResult {
     private final List<String> colErrors = new ArrayList<>();
     private final List<String> boxErrors = new ArrayList<>();
 
+    private final List<String> nulls = new ArrayList<>();
+
     public void addRowError(String e) {
         rowErrors.add(e);
     }
@@ -27,8 +29,20 @@ public class ValidationResult {
         boxErrors.add(e);
     }
 
-    public boolean isValid() {
-        return rowErrors.isEmpty() && colErrors.isEmpty() && boxErrors.isEmpty();
+    public void addNull(String e) {
+        nulls.add(e);
+    }
+
+    public int validate() {
+        final int INVALID = -1, INCOMPLETE = 1, VALID = 0;
+        if (!nulls.isEmpty()) {
+            return INCOMPLETE;
+        } else if (!(rowErrors.isEmpty() && colErrors.isEmpty() && boxErrors.isEmpty())) {
+            return INVALID;
+        } else {
+            return VALID;
+        }
+
     }
 
     public List<String> getRowErrors() {
@@ -41,6 +55,10 @@ public class ValidationResult {
 
     public List<String> getBoxErrors() {
         return boxErrors;
+    }
+
+    public List<String> getNulls() {
+        return nulls;
     }
 
     public static ValidationResult fromDup(int[][] dup, int[][] table) {

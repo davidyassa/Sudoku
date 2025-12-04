@@ -49,13 +49,19 @@ public class Test extends JPanel {
         ValidationResult r = v.validate();
 
         out.setText("TEST RESULT:\n");
-        if (r.isValid()) {
-            out.append("\nVALID SUDOKU\n");
-        } else {
-            out.append("\nINVALID\n\n");
-            r.getRowErrors().forEach(e -> out.append(e + "\n"));
-            r.getColErrors().forEach(e -> out.append(e + "\n"));
-            r.getBoxErrors().forEach(e -> out.append(e + "\n"));
+        switch (r.validate()) {
+            case 0 ->
+                out.append("\nVALID SUDOKU\n");
+            case 1 -> {
+                out.append("\nINCOMPLETE\n\n");
+                r.getNulls().forEach(e -> out.append(e + "\n"));
+            }
+            case -1 -> {
+                out.append("\nINVALID\n\n");
+                r.getRowErrors().forEach(e -> out.append(e + "\n"));
+                r.getColErrors().forEach(e -> out.append(e + "\n"));
+                r.getBoxErrors().forEach(e -> out.append(e + "\n"));
+            }
         }
     }
 }
