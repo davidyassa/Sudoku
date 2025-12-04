@@ -8,7 +8,7 @@
  */
 package backend;
 
-public class SequentialValidation implements SudokuValidator {
+public class SequentialValidation {
 
     private final int[][] board;
     private CheckerTask ct;
@@ -17,7 +17,6 @@ public class SequentialValidation implements SudokuValidator {
         this.board = board;
     }
 
-    @Override
     public ValidationResult validate() {
 
         ValidationReport report = new ValidationReport();

@@ -45,7 +45,7 @@ public class Test extends JPanel {
         }
 
         int[][] board = csvManager.getInstance().getTable();
-        SudokuValidator v = new SequentialValidation(board);
+        SequentialValidation v = new SequentialValidation(board);
         ValidationResult r = v.validate();
 
         out.setText("TEST RESULT:\n");
