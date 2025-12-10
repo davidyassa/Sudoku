@@ -11,13 +11,12 @@ package backend;
 public class SequentialValidation {
 
     private final int[][] board;
-    private CheckerTask ct;
 
     public SequentialValidation(int[][] board) {
         this.board = board;
     }
 
-    public ValidationResult validate() {
+    public ValidationResult generateReport() {
 
         ValidationReport report = new ValidationReport();
         for (int i = 0; i < 9; i++) {
@@ -38,10 +37,7 @@ public class SequentialValidation {
         }
         for (String err : report.getNulls()) {
             result.addNull(err);
-
         }
-
         return result;
     }
-
 }

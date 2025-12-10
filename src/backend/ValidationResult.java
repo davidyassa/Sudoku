@@ -33,14 +33,13 @@ public class ValidationResult {
         nulls.add(e);
     }
 
-    public int validate() {
-        final int INVALID = -1, INCOMPLETE = 1, VALID = 0;
+    public Validity validate() {
         if (!nulls.isEmpty()) {
-            return INCOMPLETE;
+            return Validity.INCOMPLETE;
         } else if (!(rowErrors.isEmpty() && colErrors.isEmpty() && boxErrors.isEmpty())) {
-            return INVALID;
+            return Validity.INVALID;
         } else {
-            return VALID;
+            return Validity.VALID;
         }
 
     }

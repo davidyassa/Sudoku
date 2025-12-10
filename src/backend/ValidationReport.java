@@ -26,10 +26,6 @@ public class ValidationReport {
         nulls.add(error);
     }
 
-    public boolean isValid() {
-        return valid.get();
-    }
-
     public List<String> getErrors() {
         return new ArrayList<>(errors);
     }

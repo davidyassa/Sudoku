@@ -4,7 +4,7 @@
  */
 package frontend;
 
-import backend.*;
+import controller.GameDriver;
 import main.FrameManager;
 import javax.swing.*;
 
@@ -43,25 +43,8 @@ public class Test extends JPanel {
             JOptionPane.showMessageDialog(this, "Open a CSV first!", "Error", JOptionPane.ERROR_MESSAGE);
             return;
         }
-
-        int[][] board = csvManager.getInstance().getTable();
-        SequentialValidation v = new SequentialValidation(board);
-        ValidationResult r = v.validate();
-
-        out.setText("TEST RESULT:\n");
-        switch (r.validate()) {
-            case 0 ->
-                out.append("\nVALID SUDOKU\n");
-            case 1 -> {
-                out.append("\nINCOMPLETE\n\n");
-                r.getNulls().forEach(e -> out.append(e + "\n"));
-            }
-            case -1 -> {
-                out.append("\nINVALID\n\n");
-                r.getRowErrors().forEach(e -> out.append(e + "\n"));
-                r.getColErrors().forEach(e -> out.append(e + "\n"));
-                r.getBoxErrors().forEach(e -> out.append(e + "\n"));
-            }
-        }
+        GameDriver gd = new GameDriver();
+        String report = gd.getReportOrValid();
+        out.setText(report);
     }
 }
