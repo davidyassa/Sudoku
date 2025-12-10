@@ -19,6 +19,7 @@ public class SequentialValidation {
     public ValidationResult generateReport() {
 
         ValidationReport report = new ValidationReport();
+
         for (int i = 0; i < 9; i++) {
             new CheckerTask(board, RegionType.ROW, i, report).run();
             new CheckerTask(board, RegionType.COLUMN, i, report).run();
@@ -26,18 +27,9 @@ public class SequentialValidation {
         }
 
         ValidationResult result = new ValidationResult();
-        for (String err : report.getErrors()) {
-            if (err.startsWith("ROW")) {
-                result.addRowError(err);
-            } else if (err.startsWith("COLUMN")) {
-                result.addColError(err);
-            } else {
-                result.addBoxError(err);
-            }
-        }
-        for (String err : report.getNulls()) {
-            result.addNull(err);
-        }
+        report.getErrors().forEach(result::addError);
+        report.getNulls().forEach(result::addNull);
+
         return result;
     }
 }

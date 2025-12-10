@@ -33,14 +33,13 @@ public class GameDriver {
     public String getReportOrValid() {
         Validity v = boardValidity();
         StringBuilder sb = new StringBuilder("TEST RESULT:\n");
+        sb.append(v.toString()).append(" SUDOKU\n");
         switch (v) {
-            case VALID ->
-                sb.append("\nVALID SUDOKU\n");
+            // no case VALID since "VALID SUDOKU" is all we need
             case INCOMPLETE -> {
                 res.getNulls().forEach(e -> sb.append(e).append("\n"));
             }
             case INVALID -> {
-                sb.append("\nINVALID\n\n");
                 res.getRowErrors().forEach(e -> sb.append(e).append("\n"));
                 res.getColErrors().forEach(e -> sb.append(e).append("\n"));
                 res.getBoxErrors().forEach(e -> sb.append(e).append("\n"));
