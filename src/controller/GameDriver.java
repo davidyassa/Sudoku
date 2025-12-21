@@ -11,50 +11,76 @@ import java.util.HashMap;
  *
  * @author DELL 7550
  */
+
 public class GameDriver {
 
     private final int[][] board;
     private ValidationResult res;
     private final HashMap<Difficulty, int[][]> games = new HashMap<>();
+    
+    // Undo Log
+    private final Stack<Move> undoStack = new Stack<>();
 
-    public GameDriver() {
+    // Constructor that accepts path (Fixes Singleton Issue)
+    public GameDriver(String path) {
+        if (path != null) {
+            csvManager.getInstance(path);
+        }
         board = csvManager.getInstance().getTable();
+    }
+    
+    public GameDriver() {
+         board = csvManager.getInstance().getTable();
     }
 
     public void driveGames() throws InvalidGame {
-
         if (this.validateBoard() != Validity.VALID) {
             throw new InvalidGame("Source board not valid");
         }
 
-        int[][] easyBoard = new GenerateGame(this.getBoard(), Difficulty.EASY).generate();
-        int[][] mediumBoard = new GenerateGame(this.getBoard(), Difficulty.MEDIUM).generate();
-        int[][] hardBoard = new GenerateGame(this.getBoard(), Difficulty.HARD).generate();
-        games.put(Difficulty.EASY, easyBoard);
-        games.put(Difficulty.MEDIUM, mediumBoard);
-        games.put(Difficulty.HARD, hardBoard);
+        games.put(Difficulty.EASY, new GenerateGame(this.getBoard(), Difficulty.EASY).generate());
+        games.put(Difficulty.MEDIUM, new GenerateGame(this.getBoard(), Difficulty.MEDIUM).generate());
+        games.put(Difficulty.HARD, new GenerateGame(this.getBoard(), Difficulty.HARD).generate());
 
-        // ↓↓↓↓ then save boards to folders ↓↓↓↓
-        // for(int[][] board : games) csvManager.save(board); //7aga keda
+        long t = System.currentTimeMillis();
+        csvManager.getInstance().saveBoard(games.get(Difficulty.EASY), "EASY", "game_" + t);
+        csvManager.getInstance().saveBoard(games.get(Difficulty.MEDIUM), "MEDIUM", "game_" + t);
+        csvManager.getInstance().saveBoard(games.get(Difficulty.HARD), "HARD", "game_" + t);
+    }
+    
+    public void updateCell(int r, int c, int newValue) {
+        int oldValue = board[r][c];
+        if (oldValue != newValue) {
+            undoStack.push(new Move(r, c, oldValue, newValue));
+            board[r][c] = newValue;
+        }
+    }
+    
+    public void undo() {
+        if (!undoStack.isEmpty()) {
+            Move lastMove = undoStack.pop();
+            board[lastMove.row][lastMove.col] = lastMove.oldValue;
+        }
+    }
+
+    public void saveUnfinishedGame() {
+        long t = System.currentTimeMillis();
+        csvManager.getInstance().saveBoard(board, "INCOMPLETE", "unfinished_" + t);
+    }
+
+    public boolean checkWinAndDelete() {
+        if (validateBoard() == Validity.VALID) {
+            return csvManager.getInstance().deleteCurrentFile();
+        }
+        return false;
     }
 
     public Validity validateBoard() {
         res = new SequentialValidation(board).generateReport();
-
         return res.validate();
-
     }
 
-    public int[][] getBoard() {
-        return board;
-    }
-
-    public ValidationResult getResult() {
-        return res;
-    }
-
-    public HashMap<Difficulty, int[][]> getGames() {
-        return games;
-    }
-
+    public int[][] getBoard() { return board; }
+    public ValidationResult getResult() { return res; }
+    public HashMap<Difficulty, int[][]> getGames() { return games; }
 }
