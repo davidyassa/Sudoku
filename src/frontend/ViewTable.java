@@ -81,7 +81,7 @@ public class ViewTable extends JPanel {
             File f = fc.getSelectedFile();
             currentFilePath = f.getAbsolutePath();
 
-            GameDriver gd = new GameDriver();
+            GameDriver gd = new GameDriver(currentFilePath);
             int[][] board = gd.getBoard();
 
             DefaultTableModel model = (DefaultTableModel) table.getModel();

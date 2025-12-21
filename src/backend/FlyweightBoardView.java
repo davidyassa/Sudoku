@@ -16,7 +16,7 @@ public class FlyweightBoardView {
     }
 
     /**
-     * Returns cell value considering permutation overlay
+     * @return Returns cell value considering permutation overlay
      */
     public int getCell(int row, int col, int[] permutation) {
         for (int i = 0; i < emptyCells.size(); i++) {

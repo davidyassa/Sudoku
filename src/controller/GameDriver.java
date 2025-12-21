@@ -17,8 +17,8 @@ public class GameDriver {
     private ValidationResult res;
     private final HashMap<Difficulty, int[][]> games = new HashMap<>();
 
-    public GameDriver() {
-        board = csvManager.getInstance().getTable();
+    public GameDriver(String filepath) {
+        board = csvManager.getInstance(filepath).getTable();
     }
 
     public void driveGames() throws InvalidGame {

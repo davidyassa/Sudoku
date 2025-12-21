@@ -44,7 +44,7 @@ public class Test extends JPanel {
             JOptionPane.showMessageDialog(this, "Open a CSV first!", "Error", JOptionPane.ERROR_MESSAGE);
             return;
         }
-        String report = getReportOrValid(new GameDriver());
+        String report = getReportOrValid(new GameDriver(view.getCurrentFilePath()));
         out.setText(report);
     }
 
