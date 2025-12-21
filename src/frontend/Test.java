@@ -44,30 +44,28 @@ public class Test extends JPanel {
             JOptionPane.showMessageDialog(this, "Open a CSV first!", "Error", JOptionPane.ERROR_MESSAGE);
             return;
         }
-        GameDriver gd = new GameDriver();
-        gd.validateBoard();
-        String report = getReportOrValid(gd);
+        String report = getReportOrValid(new GameDriver());
         out.setText(report);
     }
 
     /**
      *
-     * @param gameDriver
+     * @param gd
      * @return String -> full report
      */
-    public static String getReportOrValid(GameDriver gameDriver) {
-        Validity v = gameDriver.boardValidity();
+    public static String getReportOrValid(GameDriver gd) {
+        Validity v = gd.validateBoard();
         StringBuilder sb = new StringBuilder("TEST RESULT:\n");
         sb.append(v.toString()).append(" SUDOKU\n");
         switch (v) {
             // no case VALID since "VALID SUDOKU" is all we need
             case INCOMPLETE -> {
-                gameDriver.getResult().getNulls().forEach(e -> sb.append(e).append("\n"));
+                gd.getResult().getNulls().forEach(e -> sb.append(e).append("\n"));
             }
             case INVALID -> {
-                gameDriver.getResult().getRowErrors().forEach(e -> sb.append(e).append("\n"));
-                gameDriver.getResult().getColErrors().forEach(e -> sb.append(e).append("\n"));
-                gameDriver.getResult().getBoxErrors().forEach(e -> sb.append(e).append("\n"));
+                gd.getResult().getRowErrors().forEach(e -> sb.append(e).append("\n"));
+                gd.getResult().getColErrors().forEach(e -> sb.append(e).append("\n"));
+                gd.getResult().getBoxErrors().forEach(e -> sb.append(e).append("\n"));
             }
         }
         return sb.toString();

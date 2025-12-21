@@ -22,8 +22,8 @@ public class GameDriver {
     }
 
     public void driveGames() throws InvalidGame {
-        validateBoard();
-        if (boardValidity() != Validity.VALID) {
+
+        if (this.validateBoard() != Validity.VALID) {
             throw new InvalidGame("Source board not valid");
         }
 
@@ -38,12 +38,10 @@ public class GameDriver {
         // for(int[][] board : games) csvManager.save(board); //7aga keda
     }
 
-    public Validity boardValidity() {
-        return res.validate();
-    }
-
-    public void validateBoard() {
+    public Validity validateBoard() {
         res = new SequentialValidation(board).generateReport();
+
+        return res.validate();
 
     }
 
