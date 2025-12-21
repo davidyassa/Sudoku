@@ -80,7 +80,7 @@ public class ViewTable extends JPanel {
         if (fc.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) {
             File f = fc.getSelectedFile();
             currentFilePath = f.getAbsolutePath();
-            
+
             GameDriver gd = new GameDriver();
             int[][] board = gd.getBoard();
 

@@ -4,6 +4,7 @@
  */
 package frontend;
 
+import backend.Validity;
 import controller.GameDriver;
 import main.FrameManager;
 import javax.swing.*;
@@ -44,7 +45,31 @@ public class Test extends JPanel {
             return;
         }
         GameDriver gd = new GameDriver();
-        String report = gd.getReportOrValid();
+        gd.validateBoard();
+        String report = getReportOrValid(gd);
         out.setText(report);
+    }
+
+    /**
+     *
+     * @param gameDriver
+     * @return String -> full report
+     */
+    public static String getReportOrValid(GameDriver gameDriver) {
+        Validity v = gameDriver.boardValidity();
+        StringBuilder sb = new StringBuilder("TEST RESULT:\n");
+        sb.append(v.toString()).append(" SUDOKU\n");
+        switch (v) {
+            // no case VALID since "VALID SUDOKU" is all we need
+            case INCOMPLETE -> {
+                gameDriver.getResult().getNulls().forEach(e -> sb.append(e).append("\n"));
+            }
+            case INVALID -> {
+                gameDriver.getResult().getRowErrors().forEach(e -> sb.append(e).append("\n"));
+                gameDriver.getResult().getColErrors().forEach(e -> sb.append(e).append("\n"));
+                gameDriver.getResult().getBoxErrors().forEach(e -> sb.append(e).append("\n"));
+            }
+        }
+        return sb.toString();
     }
 }
