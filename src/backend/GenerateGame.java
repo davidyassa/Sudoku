@@ -4,7 +4,9 @@
  */
 package backend;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  *
@@ -34,9 +36,26 @@ public class GenerateGame {
 
     public int[][] generate() {
         int[][] generated = csvManager.clone(board);
-        for (int[] pair : pairs) {
-            generated[pair[0]][pair[1]] = 0;
+        Set<Integer> removed = new HashSet<>();
+
+        int target = pairs.size();
+        // had to use this loop to avoid collisions
+        while (removed.size() < target) {
+            List<int[]> batch = rnd.generateDistinctPairs(target);
+
+            for (int[] pair : batch) {
+                int cell = pair[0]; // 0..80
+                if (removed.add(cell)) {
+                    int r = cell / 9;
+                    int c = cell % 9;
+                    generated[r][c] = 0;
+                    if (removed.size() == target) {
+                        break;
+                    }
+                }
+            }
         }
+
         return generated;
     }
 

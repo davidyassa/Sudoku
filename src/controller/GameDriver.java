@@ -12,7 +12,6 @@ import java.util.Stack;
  *
  * @author DELL 7550
  */
-
 public class GameDriver {
 
     private final int[][] board;
@@ -45,9 +44,9 @@ public class GameDriver {
         games.put(Difficulty.HARD, new GenerateGame(this.getBoard(), Difficulty.HARD).generate());
 
         long t = System.currentTimeMillis();
-        csvManager.getInstance().saveBoard(games.get(Difficulty.EASY), "EASY", "game_" + t);
-        csvManager.getInstance().saveBoard(games.get(Difficulty.MEDIUM), "MEDIUM", "game_" + t);
-        csvManager.getInstance().saveBoard(games.get(Difficulty.HARD), "HARD", "game_" + t);
+        csvManager.getInstance().saveBoard(games.get(Difficulty.EASY), "1-EASY", "game_" + t);
+        csvManager.getInstance().saveBoard(games.get(Difficulty.MEDIUM), "2-MEDIUM", "game_" + t);
+        csvManager.getInstance().saveBoard(games.get(Difficulty.HARD), "3-HARD", "game_" + t);
     }
 
     public void updateCell(int r, int c, int newValue) {
@@ -67,7 +66,7 @@ public class GameDriver {
 
     public void saveUnfinishedGame() {
         long t = System.currentTimeMillis();
-        csvManager.getInstance().saveBoard(board, "INCOMPLETE", "unfinished_" + t);
+        csvManager.getInstance().saveBoard(board, "4-INCOMPLETE", "unfinished_" + t);
     }
 
     public boolean checkWinAndDelete() {

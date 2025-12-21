@@ -34,4 +34,7 @@ dist/
 nbdist/
 .nb-gradle/
 
+#Extras
+SudokuStorage/
+
 # End of https://www.toptal.com/developers/gitignore/api/java,netbeans

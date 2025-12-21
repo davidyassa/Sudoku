@@ -1,7 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package frontend;
 
 import backend.Validity;
@@ -48,17 +44,11 @@ public class Test extends JPanel {
         out.setText(report);
     }
 
-    /**
-     *
-     * @param gd
-     * @return String -> full report
-     */
     public static String getReportOrValid(GameDriver gd) {
         Validity v = gd.validateBoard();
         StringBuilder sb = new StringBuilder("TEST RESULT:\n");
         sb.append(v.toString()).append(" SUDOKU\n");
         switch (v) {
-            // no case VALID since "VALID SUDOKU" is all we need
             case INCOMPLETE -> {
                 gd.getResult().getNulls().forEach(e -> sb.append(e).append("\n"));
             }

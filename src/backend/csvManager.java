@@ -36,10 +36,10 @@ public class csvManager {
     public int[][] getTable() { return table; }
 
     private void createDirectories() {
-        new File(STORAGE_ROOT + "/EASY").mkdirs();
-        new File(STORAGE_ROOT + "/MEDIUM").mkdirs();
-        new File(STORAGE_ROOT + "/HARD").mkdirs();
-        new File(STORAGE_ROOT + "/INCOMPLETE").mkdirs();
+        new File(STORAGE_ROOT + "/1-EASY").mkdirs();
+        new File(STORAGE_ROOT + "/2-MEDIUM").mkdirs();
+        new File(STORAGE_ROOT + "/3-HARD").mkdirs();
+        new File(STORAGE_ROOT + "/4-INCOMPLETE").mkdirs();
     }
 
     public void saveBoard(int[][] board, String subFolder, String name) {
