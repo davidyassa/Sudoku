@@ -8,8 +8,8 @@ package backend;
  *
  * @author DELL 7550
  */
-public enum Validity {
-    VALID,
-    INVALID,
-    INCOMPLETE
+public enum Difficulty {
+    EASY, //10 cells
+    MEDIUM, //20 cells
+    HARD // 25 cells
 }

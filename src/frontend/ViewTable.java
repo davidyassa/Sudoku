@@ -4,7 +4,7 @@
  */
 package frontend;
 
-import backend.csvManager;
+import controller.GameDriver;
 import java.io.File;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
@@ -81,13 +81,13 @@ public class ViewTable extends JPanel {
             File f = fc.getSelectedFile();
             currentFilePath = f.getAbsolutePath();
 
-            csvManager mgr = csvManager.getInstance(currentFilePath);
-            int[][] data = mgr.getTable();
+            GameDriver gd = new GameDriver();
+            int[][] board = gd.getBoard();
 
             DefaultTableModel model = (DefaultTableModel) table.getModel();
             for (int r = 0; r < 9; r++) {
                 for (int c = 0; c < 9; c++) {
-                    model.setValueAt(data[r][c] == 0 ? "" : data[r][c], r, c);
+                    model.setValueAt(board[r][c] == 0 ? "" : board[r][c], r, c);
                 }
             }
         }

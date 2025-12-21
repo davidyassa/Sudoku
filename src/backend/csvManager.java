@@ -11,14 +11,14 @@ public class csvManager {
     private final String filename;
     private final int[][] table;
 
-    // PRIVATE constructor -> loads table immediately
+    // PRIVATE constructor for singleton
     private csvManager(String file) {
         this.filename = file;
         this.table = loadTableInternal();
     }
 
     public static csvManager getInstance(String file) {
-        // create new instance if needed
+        // create new instance if needed (lazy init)
         if (instance == null || (file != null && !instance.filename.equals(file))) {
             if (file == null) {
                 throw new IllegalStateException("First call must include filename");
@@ -61,7 +61,7 @@ public class csvManager {
                         try {
                             arr[row][col] = Integer.parseInt(parts[col].trim());
                         } catch (NumberFormatException e) {
-                            arr[row][col] = 0; // fallback safe default
+                            arr[row][col] = 0; // safe default
                         }
                     }
                 }
@@ -72,5 +72,14 @@ public class csvManager {
         }
 
         return arr;
+    }
+
+    // deep copy for boards
+    public static int[][] clone(int[][] board) {
+        int[][] copy = new int[9][9];
+        for (int r = 0; r < 9; r++) {
+            copy[r] = board[r].clone();
+        }
+        return copy;
     }
 }

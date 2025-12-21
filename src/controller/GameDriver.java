@@ -5,6 +5,7 @@
 package controller;
 
 import backend.*;
+import java.util.HashMap;
 
 /**
  *
@@ -13,39 +14,47 @@ import backend.*;
 public class GameDriver {
 
     private final int[][] board;
-    private final SequentialValidation seq;
-    private final ValidationResult res;
+    private ValidationResult res;
+    private final HashMap<Difficulty, int[][]> games = new HashMap<>();
 
     public GameDriver() {
         board = csvManager.getInstance().getTable();
-        seq = new SequentialValidation(board);
-        res = seq.generateReport();
     }
 
-    /**
-     *
-     * @return String -> full report
-     */
-    public Validity boardValidity() {
-        return res.validate();
-    }
+    public void driveGames() throws InvalidGame {
 
-    public String getReportOrValid() {
-        Validity v = boardValidity();
-        StringBuilder sb = new StringBuilder("TEST RESULT:\n");
-        sb.append(v.toString()).append(" SUDOKU\n");
-        switch (v) {
-            // no case VALID since "VALID SUDOKU" is all we need
-            case INCOMPLETE -> {
-                res.getNulls().forEach(e -> sb.append(e).append("\n"));
-            }
-            case INVALID -> {
-                res.getRowErrors().forEach(e -> sb.append(e).append("\n"));
-                res.getColErrors().forEach(e -> sb.append(e).append("\n"));
-                res.getBoxErrors().forEach(e -> sb.append(e).append("\n"));
-            }
+        if (this.validateBoard() != Validity.VALID) {
+            throw new InvalidGame("Source board not valid");
         }
-        return sb.toString();
+
+        int[][] easyBoard = new GenerateGame(this.getBoard(), Difficulty.EASY).generate();
+        int[][] mediumBoard = new GenerateGame(this.getBoard(), Difficulty.MEDIUM).generate();
+        int[][] hardBoard = new GenerateGame(this.getBoard(), Difficulty.HARD).generate();
+        games.put(Difficulty.EASY, easyBoard);
+        games.put(Difficulty.MEDIUM, mediumBoard);
+        games.put(Difficulty.HARD, hardBoard);
+
+        // ↓↓↓↓ then save boards to folders ↓↓↓↓
+        // for(int[][] board : games) csvManager.save(board); //7aga keda
+    }
+
+    public Validity validateBoard() {
+        res = new SequentialValidation(board).generateReport();
+
+        return res.validate();
+
+    }
+
+    public int[][] getBoard() {
+        return board;
+    }
+
+    public ValidationResult getResult() {
+        return res;
+    }
+
+    public HashMap<Difficulty, int[][]> getGames() {
+        return games;
     }
 
 }
