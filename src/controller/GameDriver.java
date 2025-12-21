@@ -47,5 +47,9 @@ public class GameDriver {
         }
         return sb.toString();
     }
+    
+    public int[][] getBoard(){
+        return board;
+    }
 
 }
