@@ -11,7 +11,9 @@ import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import javax.swing.table.DefaultTableCellRenderer;
 import main.FrameManager;
+import backend.Validity;
 
+import javax.swing.event.TableModelEvent;
 public class ViewTable extends JPanel {
 
     private FrameManager frame;
