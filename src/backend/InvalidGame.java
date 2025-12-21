@@ -4,13 +4,9 @@
  */
 package backend;
 
-/**
- *
- * @author DELL 7550
- */
 public class InvalidGame extends Exception {
 
-    public InvalidGame(String source_board_not_valid) {
+    public InvalidGame(String message) {
+        super(message);
     }
-
 }

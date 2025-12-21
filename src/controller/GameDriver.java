@@ -27,6 +27,8 @@ public class GameDriver {
             csvManager.getInstance(path);
         }
         board = csvManager.getInstance().getTable();
+    public GameDriver(String filepath) {
+        board = csvManager.getInstance(filepath).getTable();
     }
     
     public GameDriver() {

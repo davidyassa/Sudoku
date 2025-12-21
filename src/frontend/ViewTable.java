@@ -148,6 +148,9 @@ public class ViewTable extends JPanel {
         if (fc.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) {
             File f = fc.getSelectedFile();
             currentFilePath = f.getAbsolutePath();
+
+
+            // إرسال المسار للـ Driver (تصحيح الـ Singleton)
             gd = new GameDriver(currentFilePath);
             refreshTableFromBoard();
         }
