@@ -7,6 +7,7 @@ package controller;
 import backend.*;
 import java.util.HashMap;
 import java.util.Stack;
+
 /**
  *
  * @author DELL 7550
@@ -17,7 +18,7 @@ public class GameDriver {
     private final int[][] board;
     private ValidationResult res;
     private final HashMap<Difficulty, int[][]> games = new HashMap<>();
-    
+
     // Undo Log
     private final Stack<Move> undoStack = new Stack<>();
 
@@ -27,12 +28,11 @@ public class GameDriver {
             csvManager.getInstance(path);
         }
         board = csvManager.getInstance().getTable();
-    public GameDriver(String filepath) {
-        board = csvManager.getInstance(filepath).getTable();
+
     }
-    
+
     public GameDriver() {
-         board = csvManager.getInstance().getTable();
+        board = csvManager.getInstance().getTable();
     }
 
     public void driveGames() throws InvalidGame {
@@ -49,7 +49,7 @@ public class GameDriver {
         csvManager.getInstance().saveBoard(games.get(Difficulty.MEDIUM), "MEDIUM", "game_" + t);
         csvManager.getInstance().saveBoard(games.get(Difficulty.HARD), "HARD", "game_" + t);
     }
-    
+
     public void updateCell(int r, int c, int newValue) {
         int oldValue = board[r][c];
         if (oldValue != newValue) {
@@ -57,7 +57,7 @@ public class GameDriver {
             board[r][c] = newValue;
         }
     }
-    
+
     public void undo() {
         if (!undoStack.isEmpty()) {
             Move lastMove = undoStack.pop();
@@ -82,7 +82,15 @@ public class GameDriver {
         return res.validate();
     }
 
-    public int[][] getBoard() { return board; }
-    public ValidationResult getResult() { return res; }
-    public HashMap<Difficulty, int[][]> getGames() { return games; }
+    public int[][] getBoard() {
+        return board;
+    }
+
+    public ValidationResult getResult() {
+        return res;
+    }
+
+    public HashMap<Difficulty, int[][]> getGames() {
+        return games;
+    }
 }
