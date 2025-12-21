@@ -17,33 +17,44 @@ public class ViewTable extends JPanel {
     private FrameManager frame;
     private JTable table;
     private String currentFilePath = null;
+    
+    // 1. تعريف الـ GameDriver هنا عشان كل الزراير تشوفه
+    private GameDriver gd;
+    
+    // 2. Flag عشان نفرق بين كتابة اليوزر والـ Undo
+    private boolean isProgrammaticChange = false;
 
     public ViewTable(FrameManager frame) {
         this.frame = frame;
         setLayout(new BorderLayout());
 
+        // --- Top Panel ---
         JPanel top = new JPanel();
-        JButton openButton = new JButton("Open CSV");
+        JButton openButton = new JButton("Open CSV / Start Game");
         top.add(openButton);
         add(top, BorderLayout.NORTH);
 
+        // --- Bottom Panel (The Buttons) ---
         JPanel bottom = new JPanel();
-        JButton TestButton = new JButton("Test");
-        JButton exitButton = new JButton("Exit");
+        JButton undoButton = new JButton("Undo ↩");
+        JButton saveButton = new JButton("Save & Exit 💾");
+        JButton checkButton = new JButton("Check & Submit ✅");
+        JButton backButton = new JButton("Back");
 
-        bottom.add(TestButton);
-        bottom.add(exitButton);
+        bottom.add(undoButton);
+        bottom.add(saveButton);
+        bottom.add(checkButton);
+        bottom.add(backButton);
         add(bottom, BorderLayout.SOUTH);
 
+        // --- Table Setup ---
         table = new JTable(9, 9);
         table.setTableHeader(null);
         table.setRowHeight(50);
         table.setShowGrid(true);
         table.setGridColor(Color.BLACK);
-
-        JScrollPane scroll = new JScrollPane(table);
-        add(scroll, BorderLayout.CENTER);
-
+        
+        // Custom Renderer for 3x3 Borders
         table.setDefaultRenderer(Object.class, new DefaultTableCellRenderer() {
             @Override
             public Component getTableCellRendererComponent(
@@ -63,34 +74,131 @@ public class ViewTable extends JPanel {
 
                 cell.setBorder(BorderFactory.createMatteBorder(
                         top, left, bottom, right, Color.BLACK));
-
+                
+                // تلوين الخانات الفاضية للتوضيح (اختياري)
+                if (value == null || value.toString().isEmpty() || value.toString().equals("0")) {
+                     cell.setBackground(new Color(245, 245, 245));
+                } else {
+                     cell.setBackground(Color.WHITE);
+                }
+                
                 return cell;
             }
         });
 
+        JScrollPane scroll = new JScrollPane(table);
+        add(scroll, BorderLayout.CENTER);
+
+        // --- Actions ---
+
         openButton.addActionListener(e -> chooseAndLoadCSV());
-        TestButton.addActionListener(e -> frame.switchPanel(new Test(frame, this)));
-        exitButton.addActionListener(e -> System.exit(0));
+        
+        backButton.addActionListener(e -> frame.previousPanel());
+
+        // 3. زرار الـ UNDO
+        undoButton.addActionListener(e -> {
+            if (gd != null) {
+                gd.undo(); // رجع القيمة في الباك اند
+                refreshTableFromBoard(); // حدث الجدول قدام اليوزر
+            }
+        });
+
+        // 4. زرار الـ SAVE
+        saveButton.addActionListener(e -> {
+            if (gd != null) {
+                gd.saveUnfinishedGame();
+                JOptionPane.showMessageDialog(this, "Game Saved in 'INCOMPLETE' folder!");
+                frame.showMainMenu(); // ارجع للقائمة الرئيسية
+            }
+        });
+
+        // 5. زرار الـ CHECK & DELETE
+        checkButton.addActionListener(e -> {
+            if (gd != null) {
+                Validity v = gd.validateBoard();
+                if (v == Validity.VALID) {
+                    boolean deleted = gd.checkWinAndDelete();
+                    if (deleted) {
+                        JOptionPane.showMessageDialog(this, "Congratulations! Valid Solution.\nFile Deleted from Storage.");
+                        frame.showMainMenu();
+                    } else {
+                        JOptionPane.showMessageDialog(this, "Valid Solution! (File could not be deleted or not local)");
+                    }
+                } else {
+                    JOptionPane.showMessageDialog(this, "Not Valid Yet:\n" + v.toString(), "Check Result", JOptionPane.WARNING_MESSAGE);
+                }
+            }
+        });
+        
+        // 6. Table Listener (عشان يحس بتغيير الأرقام ويسجلها في الـ Undo Stack)
+        table.setModel(new DefaultTableModel(9, 9)); // Init empty model
+        table.getModel().addTableModelListener(e -> {
+            // لو التغيير جاي من الكود (زي Undo) متعملش حاجة
+            if (isProgrammaticChange || gd == null) return;
+            
+            if (e.getType() == TableModelEvent.UPDATE) {
+                int row = e.getFirstRow();
+                int col = e.getColumn();
+                
+                try {
+                    Object val = table.getValueAt(row, col);
+                    int num = 0;
+                    if (val != null && !val.toString().trim().isEmpty()) {
+                        num = Integer.parseInt(val.toString().trim());
+                    }
+                    
+                    // تحديث الباك اند وتسجيل الحركة
+                    gd.updateCell(row, col, num);
+                    
+                } catch (NumberFormatException ex) {
+                    // لو اليوزر كتب حروف، امسحها
+                    isProgrammaticChange = true;
+                    table.setValueAt("", row, col);
+                    isProgrammaticChange = false;
+                }
+            }
+        });
     }
 
     private void chooseAndLoadCSV() {
-        JFileChooser fc = new JFileChooser("./TestCases");
+        JFileChooser fc = new JFileChooser("./SudokuStorage"); // يبدأ من فولدر التخزين
         fc.setDialogTitle("Choose Sudoku CSV");
 
         if (fc.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) {
             File f = fc.getSelectedFile();
             currentFilePath = f.getAbsolutePath();
 
-            GameDriver gd = new GameDriver();
-            int[][] board = gd.getBoard();
+            // إرسال المسار للـ Driver (تصحيح الـ Singleton)
+            gd = new GameDriver(currentFilePath);
+            
+            // لو عايز تشغل توليد الألعاب (Easy/Med/Hard) أول ما تفتح الملف:
+            /*
+            try {
+                gd.driveGames(); 
+                JOptionPane.showMessageDialog(this, "Games Generated & Saved in Folders!");
+            } catch (Exception ex) { ex.printStackTrace(); }
+            */
 
-            DefaultTableModel model = (DefaultTableModel) table.getModel();
-            for (int r = 0; r < 9; r++) {
-                for (int c = 0; c < 9; c++) {
-                    model.setValueAt(board[r][c] == 0 ? "" : board[r][c], r, c);
-                }
+            refreshTableFromBoard();
+        }
+    }
+    
+    // دالة مساعدة لتحديث الجدول من مصفوفة الباك اند
+    private void refreshTableFromBoard() {
+        if (gd == null) return;
+        
+        isProgrammaticChange = true; // وقف الـ Listener
+        
+        int[][] board = gd.getBoard();
+        DefaultTableModel model = (DefaultTableModel) table.getModel();
+        
+        for (int r = 0; r < 9; r++) {
+            for (int c = 0; c < 9; c++) {
+                model.setValueAt(board[r][c] == 0 ? "" : board[r][c], r, c);
             }
         }
+        
+        isProgrammaticChange = false; // شغل الـ Listener تاني
     }
 
     public String getCurrentFilePath() {
