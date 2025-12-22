@@ -4,7 +4,9 @@
  */
 package backend;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  *
@@ -37,6 +39,7 @@ public class GenerateGame {
         for (int[] pair : pairs) {
             generated[pair[0]][pair[1]] = 0;
         }
+
         return generated;
     }
 

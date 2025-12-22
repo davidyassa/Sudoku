@@ -71,6 +71,7 @@ public class FrameManager extends JFrame {
             revalidate();
             repaint();
         }
+        showMainMenu();
     }
 
     public static void main(String[] args) {

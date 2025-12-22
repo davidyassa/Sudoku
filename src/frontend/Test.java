@@ -1,6 +1,6 @@
 /*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Main.java to edit this template
  */
 package frontend;
 
@@ -44,21 +44,15 @@ public class Test extends JPanel {
             JOptionPane.showMessageDialog(this, "Open a CSV first!", "Error", JOptionPane.ERROR_MESSAGE);
             return;
         }
-        String report = getReportOrValid(new GameDriver());
+        String report = getReportOrValid(new GameDriver(view.getCurrentFilePath()));
         out.setText(report);
     }
 
-    /**
-     *
-     * @param gd
-     * @return String -> full report
-     */
     public static String getReportOrValid(GameDriver gd) {
         Validity v = gd.validateBoard();
         StringBuilder sb = new StringBuilder("TEST RESULT:\n");
         sb.append(v.toString()).append(" SUDOKU\n");
         switch (v) {
-            // no case VALID since "VALID SUDOKU" is all we need
             case INCOMPLETE -> {
                 gd.getResult().getNulls().forEach(e -> sb.append(e).append("\n"));
             }
