@@ -4,9 +4,9 @@
  */
 package frontend;
 
-import backend.Validity;
-import controller.GameDriver;
 import main.FrameManager;
+import controller.GameDriver;
+import backend.Validity;
 import javax.swing.*;
 
 public class Test extends JPanel {

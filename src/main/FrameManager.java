@@ -4,10 +4,10 @@
  */
 package main;
 
+import controller.GameDriver;
 import frontend.ViewTable;
 import java.util.Stack;
 import javax.swing.*;
-import frontend.CatalogueScreen;
 
 /**
  *
@@ -17,6 +17,7 @@ public class FrameManager extends JFrame {
 
     private final Stack<JPanel> history = new Stack<>();
     private JPanel currentPanel;
+    private GameDriver gd;
 
     public FrameManager() {
         this.setTitle("Sudoku 9x9");
@@ -42,10 +43,7 @@ public class FrameManager extends JFrame {
 
         exitButton.addActionListener(e -> System.exit(0));
         StartButton.addActionListener(e -> switchPanel(new ViewTable(this)));
-        StartButton.addActionListener(e ->  showCatalogue());
 
-        
-        
         setContentPane(panel);
         revalidate();
         repaint();
@@ -64,27 +62,33 @@ public class FrameManager extends JFrame {
 
     public void previousPanel() {
         if (!history.isEmpty()) {
-            JPanel prev = history.pop();
-            currentPanel = prev;
-
-            setContentPane(prev);
-            revalidate();
-            repaint();
+            currentPanel = history.pop();
+            setContentPane(currentPanel);
+        } else {
+            showMainMenu();
+            return;
         }
-        showMainMenu();
-    }
-
-    public static void main(String[] args) {
-        FrameManager f = new FrameManager();
-    }
-    
-    public void showCatalogue() {
-        switchPanel(new CatalogueScreen(this)); 
+        revalidate();
+        repaint();
     }
 
     public void startGame() {
         switchPanel(new ViewTable(this));
     }
-    
-    
+
+    public GameDriver getGameDriver() {
+        return gd;
+    }
+
+    public void setGameDriver(GameDriver gd) {
+        this.gd = gd;
+    }
+
+    public JPanel getCurrentPanel() {
+        return currentPanel;
+    }
+
+    public static void main(String[] args) {
+        FrameManager f = new FrameManager();
+    }
 }

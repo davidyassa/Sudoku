@@ -3,6 +3,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
 package backend;
+
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
@@ -32,7 +33,7 @@ public class PermutationIterator implements Iterator<int[]> {
         int[] result = current.clone();
         increment();
         return result;
-         
+
     }
 
     private void increment() {

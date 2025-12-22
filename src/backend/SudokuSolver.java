@@ -60,12 +60,16 @@ public class SudokuSolver {
     private boolean isValidAtPosition(FlyweightBoardView view, int row, int col, int val, int[] candidate) {
         // Check row
         for (int c = 0; c < 9; c++) {
-            if (c != col && view.getCell(row, c, candidate) == val) return false;
+            if (c != col && view.getCell(row, c, candidate) == val) {
+                return false;
+            }
         }
 
         // Check column
         for (int r = 0; r < 9; r++) {
-            if (r != row && view.getCell(r, col, candidate) == val) return false;
+            if (r != row && view.getCell(r, col, candidate) == val) {
+                return false;
+            }
         }
 
         // Check 3x3 block
@@ -73,7 +77,9 @@ public class SudokuSolver {
         int startCol = (col / 3) * 3;
         for (int r = startRow; r < startRow + 3; r++) {
             for (int c = startCol; c < startCol + 3; c++) {
-                if ((r != row || c != col) && view.getCell(r, c, candidate) == val) return false;
+                if ((r != row || c != col) && view.getCell(r, c, candidate) == val) {
+                    return false;
+                }
             }
         }
 

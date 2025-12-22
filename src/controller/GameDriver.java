@@ -5,11 +5,10 @@
 package controller;
 
 import backend.*;
+import java.io.File;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Stack;
-import java.util.List;  
-import java.util.Arrays; 
-import java.util.ArrayList;
 
 /**
  *
@@ -17,7 +16,7 @@ import java.util.ArrayList;
  */
 public class GameDriver {
 
-    private final int[][] board;
+    private int[][] board = null;
     private ValidationResult res;
     private final HashMap<Difficulty, int[][]> games = new HashMap<>();
     private final Stack<int[][]> history = new Stack<>();
@@ -35,19 +34,20 @@ public class GameDriver {
     }
 
     public GameDriver() {
-        board = csvManager.getInstance().getTable();
     }
-    
+
     public boolean canSolve(int[][] currentBoard) {
         int emptyCount = 0;
         for (int i = 0; i < 9; i++) {
             for (int j = 0; j < 9; j++) {
-                if (currentBoard[i][j] == 0) emptyCount++;
+                if (currentBoard[i][j] == 0) {
+                    emptyCount++;
+                }
             }
         }
         return emptyCount == 5;
     }
-    
+
     public void saveToHistory(int[][] currentBoard) {
         int[][] copy = new int[9][9];
         for (int i = 0; i < 9; i++) {
@@ -55,19 +55,11 @@ public class GameDriver {
         }
         history.push(copy);
     }
-    
-    public int[][] undo() {
-        if (!history.isEmpty()) {
-            return history.pop();
-        }
-        return null;
-    }
 
     public Validity verifyCurrentBoard(int[][] currentBoard) {
         res = new SequentialValidation(currentBoard).generateReport();
-        return res.validate(); 
+        return res.validate();
     }
-    
 
     public void driveGames() throws InvalidGame {
         if (this.validateBoard() != Validity.VALID) {
@@ -128,15 +120,29 @@ public class GameDriver {
         return games;
     }
 
-public List<String> detectUnfinishedGames() {
-        
-       
-        return Arrays.asList("Game (Incomplete)", "Game (Paused)");
+    public static ArrayList<String> detectUnfinishedGames() {
+        ArrayList<String> unfinished = new ArrayList<>();
+        File incompleteDir = new File("./SudokuStorage/4-INCOMPLETE");
+
+        if (!incompleteDir.exists()) {
+            return unfinished;
+        }
+
+        File[] files = incompleteDir.listFiles();
+        if (files == null) {
+            return unfinished;
+        }
+
+        for (File f : files) {
+            if (f.isFile()) {
+                unfinished.add(f.getAbsolutePath());
+            }
+        }
+        return unfinished;
     }
 
-    
     public Difficulty[] detectAvailableDifficulties() {
-        return Difficulty.values(); 
+        return Difficulty.values();
     }
 
 }

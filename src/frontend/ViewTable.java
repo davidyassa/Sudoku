@@ -4,15 +4,15 @@
  */
 package frontend;
 
-import backend.InvalidGame;
 import main.FrameManager;
 import controller.*;
+import backend.InvalidGame; // need the exception
 import backend.Validity; //need the enum
 import java.io.File;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
-import java.awt.*;
 import javax.swing.table.DefaultTableCellRenderer;
+import java.awt.*;
 
 import javax.swing.event.TableModelEvent;
 
@@ -27,21 +27,21 @@ public class ViewTable extends JPanel {
     public ViewTable(FrameManager frame) {
         this.frame = frame;
         setLayout(new BorderLayout());
+        this.gd = frame.getGameDriver();
 
         JPanel top = new JPanel();
         JButton backButton = new JButton("Back");
-        JButton openButton = new JButton("Open CSV / Start Game");
-        JButton generateButton = new JButton("Generate Games");
-        
+        JButton openButton = new JButton("Open CSV");
+        JButton playButton = new JButton("Play Games");
+
         top.add(backButton);
         top.add(openButton);
-        top.add(generateButton);
+        top.add(playButton);
         add(top, BorderLayout.NORTH);
-        
 
         JPanel bottom = new JPanel();
         JButton TestButton = new JButton("Test");
-        
+
         JButton undoButton = new JButton("Undo");
         JButton saveButton = new JButton("Save & Exit");
         JButton checkButton = new JButton("Check & Submit");
@@ -92,9 +92,10 @@ public class ViewTable extends JPanel {
         });
 
         openButton.addActionListener(e -> chooseAndLoadCSV());
-        TestButton.addActionListener(e -> frame.switchPanel(new Test(frame, this)));        
+        TestButton.addActionListener(e -> frame.switchPanel(new Test(frame, this)));
         backButton.addActionListener(e -> frame.previousPanel());
         solve.addActionListener(e -> solve());
+        playButton.addActionListener(e -> frame.switchPanel(new CatalogueScreen(frame)));
 
         undoButton.addActionListener(e -> {
             if (gd != null) {
@@ -125,20 +126,6 @@ public class ViewTable extends JPanel {
             }
         });
 
-        generateButton.addActionListener(e -> {
-            if (gd == null) {
-                JOptionPane.showMessageDialog(this, "Load a valid solution first.");
-                return;
-            }
-
-            try {
-                gd.driveGames();
-                JOptionPane.showMessageDialog(this, "Easy / Medium / Hard games generated!");
-            } catch (InvalidGame ex) {
-                JOptionPane.showMessageDialog(this, ex.getMessage(), "Generation Error", JOptionPane.ERROR_MESSAGE);
-            }
-        });
-
         table.getModel().addTableModelListener(e -> {
             if (isProgrammaticChange || gd == null) {
                 return;
@@ -163,6 +150,10 @@ public class ViewTable extends JPanel {
                 }
             }
         });
+
+        if (gd != null) {
+            refreshTableFromBoard();
+        }
     }
 
     private void solve() {
@@ -173,7 +164,6 @@ public class ViewTable extends JPanel {
             JOptionPane.showMessageDialog(this, e.getMessage(), "Solve Error", JOptionPane.ERROR_MESSAGE);
         }
     }
-    
 
     private void chooseAndLoadCSV() {
         // check for unfinished game
@@ -191,6 +181,7 @@ public class ViewTable extends JPanel {
             if (choice == JOptionPane.YES_OPTION) {
                 currentFilePath = files[0].getAbsolutePath();
                 gd = new GameDriver(currentFilePath);
+                frame.setGameDriver(gd);
                 refreshTableFromBoard();
                 return;
             }
@@ -236,4 +227,9 @@ public class ViewTable extends JPanel {
     public String getCurrentFilePath() {
         return currentFilePath;
     }
+
+    public void setCurrentFilePath(String currentFilePath) {
+        this.currentFilePath = currentFilePath;
+    }
+
 }

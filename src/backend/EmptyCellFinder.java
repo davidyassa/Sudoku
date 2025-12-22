@@ -3,15 +3,14 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
 package backend;
+
 import java.util.ArrayList;
 import java.util.List;
 
 public class EmptyCellFinder {
 
-  
     // Finds all cells with value 0 
-   //return an arraylistof arrays with its coordinates
-     
+    //return an arraylistof arrays with its coordinates
     public List<int[]> findEmptyCells(int[][] board) {
         List<int[]> empty = new ArrayList<>();
 
