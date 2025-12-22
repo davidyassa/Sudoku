@@ -40,6 +40,8 @@ public class ViewTable extends JPanel {
         
 
         JPanel bottom = new JPanel();
+        JButton TestButton = new JButton("Test");
+        
         JButton undoButton = new JButton("Undo");
         JButton saveButton = new JButton("Save & Exit");
         JButton checkButton = new JButton("Check & Submit");
@@ -90,6 +92,7 @@ public class ViewTable extends JPanel {
         });
 
         openButton.addActionListener(e -> chooseAndLoadCSV());
+        TestButton.addActionListener(e -> frame.switchPanel(new Test(frame, this)));        
         backButton.addActionListener(e -> frame.previousPanel());
         solve.addActionListener(e -> solve());
 
@@ -170,6 +173,7 @@ public class ViewTable extends JPanel {
             JOptionPane.showMessageDialog(this, e.getMessage(), "Solve Error", JOptionPane.ERROR_MESSAGE);
         }
     }
+    
 
     private void chooseAndLoadCSV() {
         // check for unfinished game

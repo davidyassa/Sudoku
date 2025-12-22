@@ -7,6 +7,7 @@ package main;
 import frontend.ViewTable;
 import java.util.Stack;
 import javax.swing.*;
+import frontend.CatalogueScreen;
 
 /**
  *
@@ -41,7 +42,10 @@ public class FrameManager extends JFrame {
 
         exitButton.addActionListener(e -> System.exit(0));
         StartButton.addActionListener(e -> switchPanel(new ViewTable(this)));
+        StartButton.addActionListener(e ->  showCatalogue());
 
+        
+        
         setContentPane(panel);
         revalidate();
         repaint();
@@ -73,4 +77,14 @@ public class FrameManager extends JFrame {
     public static void main(String[] args) {
         FrameManager f = new FrameManager();
     }
+    
+    public void showCatalogue() {
+        switchPanel(new CatalogueScreen(this)); 
+    }
+
+    public void startGame() {
+        switchPanel(new ViewTable(this));
+    }
+    
+    
 }
