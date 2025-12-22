@@ -1,0 +1,94 @@
+/*
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Main.java to edit this template
+ */
+package main;
+
+import controller.GameDriver;
+import frontend.ViewTable;
+import java.util.Stack;
+import javax.swing.*;
+
+/**
+ *
+ * @author DELL 7550
+ */
+public class FrameManager extends JFrame {
+
+    private final Stack<JPanel> history = new Stack<>();
+    private JPanel currentPanel;
+    private GameDriver gd;
+
+    public FrameManager() {
+        this.setTitle("Sudoku 9x9");
+        this.setSize(800, 600);
+        this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        this.setLocationRelativeTo(null);
+
+        showMainMenu();
+        this.setVisible(true);
+    }
+
+    public final void showMainMenu() {
+        JPanel panel = new JPanel();
+        panel.setLayout(null);
+
+        JButton StartButton = new JButton("Start");
+        StartButton.setBounds(300, 200, 150, 40);
+        panel.add(StartButton);
+
+        JButton exitButton = new JButton("Exit");
+        exitButton.setBounds(300, 300, 150, 40);
+        panel.add(exitButton);
+
+        exitButton.addActionListener(e -> System.exit(0));
+        StartButton.addActionListener(e -> switchPanel(new ViewTable(this)));
+
+        setContentPane(panel);
+        revalidate();
+        repaint();
+    }
+
+    public void switchPanel(JPanel newPanel) {
+        if (currentPanel != null) {
+            history.push(currentPanel);
+        }
+        currentPanel = newPanel;
+
+        setContentPane(newPanel);
+        revalidate();
+        repaint();
+    }
+
+    public void previousPanel() {
+        if (!history.isEmpty()) {
+            currentPanel = history.pop();
+            setContentPane(currentPanel);
+        } else {
+            showMainMenu();
+            return;
+        }
+        revalidate();
+        repaint();
+    }
+
+    public void startGame() {
+        switchPanel(new ViewTable(this));
+    }
+
+    public GameDriver getGameDriver() {
+        return gd;
+    }
+
+    public void setGameDriver(GameDriver gd) {
+        this.gd = gd;
+    }
+
+    public JPanel getCurrentPanel() {
+        return currentPanel;
+    }
+
+    public static void main(String[] args) {
+        FrameManager f = new FrameManager();
+    }
+}
