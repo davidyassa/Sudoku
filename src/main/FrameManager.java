@@ -42,7 +42,9 @@ public class FrameManager extends JFrame {
 
         exitButton.addActionListener(e -> System.exit(0));
         StartButton.addActionListener(e -> switchPanel(new ViewTable(this)));
+        StartButton.addActionListener(e ->  showCatalogue());
 
+        
         setContentPane(panel);
         revalidate();
         repaint();
