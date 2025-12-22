@@ -36,5 +36,6 @@ nbdist/
 
 #Extras
 SudokuStorage/
+TestCases/
 
 # End of https://www.toptal.com/developers/gitignore/api/java,netbeans
