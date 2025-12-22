@@ -6,6 +6,10 @@ package controller;
 
 import backend.*;
 import java.util.HashMap;
+import java.util.Stack;
+import java.util.List;  
+import java.util.Arrays; 
+import java.util.ArrayList;
 
 /**
  *
@@ -16,10 +20,42 @@ public class GameDriver {
     private final int[][] board;
     private ValidationResult res;
     private final HashMap<Difficulty, int[][]> games = new HashMap<>();
+    private final Stack<int[][]> history = new Stack<>();
 
     public GameDriver() {
         board = csvManager.getInstance().getTable();
     }
+    
+    public boolean canSolve(int[][] currentBoard) {
+        int emptyCount = 0;
+        for (int i = 0; i < 9; i++) {
+            for (int j = 0; j < 9; j++) {
+                if (currentBoard[i][j] == 0) emptyCount++;
+            }
+        }
+        return emptyCount == 5;
+    }
+    
+    public void saveToHistory(int[][] currentBoard) {
+        int[][] copy = new int[9][9];
+        for (int i = 0; i < 9; i++) {
+            System.arraycopy(currentBoard[i], 0, copy[i], 0, 9);
+        }
+        history.push(copy);
+    }
+    
+    public int[][] undo() {
+        if (!history.isEmpty()) {
+            return history.pop();
+        }
+        return null;
+    }
+
+    public Validity verifyCurrentBoard(int[][] currentBoard) {
+        res = new SequentialValidation(currentBoard).generateReport();
+        return res.validate(); 
+    }
+    
 
     public void driveGames() throws InvalidGame {
 
@@ -55,6 +91,17 @@ public class GameDriver {
 
     public HashMap<Difficulty, int[][]> getGames() {
         return games;
+    }
+
+public List<String> detectUnfinishedGames() {
+        
+       
+        return Arrays.asList("Game (Incomplete)", "Game (Paused)");
+    }
+
+    
+    public Difficulty[] detectAvailableDifficulties() {
+        return Difficulty.values(); 
     }
 
 }

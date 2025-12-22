@@ -11,12 +11,14 @@ import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import javax.swing.table.DefaultTableCellRenderer;
 import main.FrameManager;
+import backend.Validity;
 
 public class ViewTable extends JPanel {
 
     private FrameManager frame;
     private JTable table;
     private String currentFilePath = null;
+    private GameDriver gd = new GameDriver();
 
     public ViewTable(FrameManager frame) {
         this.frame = frame;
@@ -30,8 +32,14 @@ public class ViewTable extends JPanel {
         JPanel bottom = new JPanel();
         JButton TestButton = new JButton("Test");
         JButton exitButton = new JButton("Exit");
+        JButton verifyBtn = new JButton("Verify");
+        JButton solveBtn = new JButton("Solve");
+        JButton undoBtn = new JButton("Undo");
 
         bottom.add(TestButton);
+        bottom.add(verifyBtn); 
+        bottom.add(solveBtn);  
+        bottom.add(undoBtn);   
         bottom.add(exitButton);
         add(bottom, BorderLayout.SOUTH);
 
@@ -71,7 +79,50 @@ public class ViewTable extends JPanel {
         openButton.addActionListener(e -> chooseAndLoadCSV());
         TestButton.addActionListener(e -> frame.switchPanel(new Test(frame, this)));
         exitButton.addActionListener(e -> System.exit(0));
+        
+        verifyBtn.addActionListener(e -> {
+            int[][] currentBoard = getBoardFromUI();
+            Validity status = gd.verifyCurrentBoard(currentBoard);
+            JOptionPane.showMessageDialog(this, "Validation Result: " + status);
+        });
+        
+        solveBtn.addActionListener(e -> {
+            int[][] currentBoard = getBoardFromUI();
+            if (gd.canSolve(currentBoard)) {
+                JOptionPane.showMessageDialog(this, "Solving...");
+            } else {
+                JOptionPane.showMessageDialog(this, "Solve only allowed if 5 cells are empty!");
+            }
+        });
+        
+        undoBtn.addActionListener(e -> {
+            int[][] prev = gd.undo();
+            if (prev != null) {
+                updateTableUI(prev);
+            }
+        });
+        
     }
+    
+    private int[][] getBoardFromUI() {
+        int[][] b = new int[9][9];
+        for (int r = 0; r < 9; r++) {
+            for (int c = 0; c < 9; c++) {
+                Object val = table.getValueAt(r, c);
+                b[r][c] = (val == null || val.toString().isEmpty()) ? 0 : Integer.parseInt(val.toString());
+            }
+        }
+        return b;
+    }
+
+    private void updateTableUI(int[][] board) {
+        for (int r = 0; r < 9; r++) {
+            for (int c = 0; c < 9; c++) {
+                table.setValueAt(board[r][c] == 0 ? "" : board[r][c], r, c);
+            }
+        }
+    }
+    
 
     private void chooseAndLoadCSV() {
         JFileChooser fc = new JFileChooser("./TestCases");
