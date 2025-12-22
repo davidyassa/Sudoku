@@ -45,6 +45,7 @@ public class FrameManager extends JFrame {
         StartButton.addActionListener(e ->  showCatalogue());
 
         
+        
         setContentPane(panel);
         revalidate();
         repaint();
